@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="Bookstore.Presentation.Views.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Bookstore.Presentation.Views"
+             xmlns:UI="clr-namespace:Bookstore.Presentation.ViewModels"
+             xmlns:converters="clr-namespace:Bookstore.Presentation.Converters"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=UI:InventoryViewModel,
+                            IsDesignTimeCreatable=True}"
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:Background="White">
+    <UserControl.Resources>
+        <converters:EmptyCollectionToMessageConverter x:Key="EmptyCollectionToMessageConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <StackPanel Margin="10 10 10 10">
+                <Label Content="Stores" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding Stores}"
+                          SelectedItem="{Binding SelectedStore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+    
+            <Separator/>
+            <Label Content="Inventory manager" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
+                <Label Content="Selected book:" FontWeight="SemiBold"/>
+                <Label Content="{Binding SelectedBook.Title}"
+                       Height="30"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+                <Label Content="Quantity:"/>
+                <TextBox Text="{Binding SelectedBook.Quantity, 
+                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="50"/>
+                <Button Content="Remove Book" 
+                        Command="{Binding RemoveBookCommand}" 
+                        Width=" 100"
+                        Height="25"
+                        Margin="40 0 0 0"/>
+            </StackPanel>
+            <Separator Margin="0 10 0 10"/>
+            <Label Content="Add book to inventory" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel Margin="10 0 10 0">
+                <Label Content="Choose a book to add:"/>
+                <ComboBox ItemsSource="{Binding AddableBooks, Converter={StaticResource EmptyCollectionToMessageConverter}}"
+                          SelectedItem="{Binding SelectedBookToAdd}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="NoWrap" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                <Label Content="Quantity:"/>
+                <TextBox Text="{Binding SelectedBookToAdd.Quantity, Mode=TwoWay}"
+                        Width="50"/>
+                <Button Content="Add book" 
+                        Command="{Binding AddBookCommand}"
+                        Width="100" 
+                        Margin="40 0 0 0"
+                        Height="25"/>
+                </StackPanel>
+            </StackPanel>
+            <Separator Margin="0 0 0 10"/>
+            <StackPanel Orientation="Horizontal"
+                    Height="25"
+                    Margin="10 30 10 0"
+                    HorizontalAlignment="Center">
+                <Button Content="Save all changes" 
+                    Command="{Binding SaveInventoryCommand}"
+                    Margin="0 0 25 0"
+                    Width="100"/>
+                <Button Content="Undo all changes"
+                    Width="100"/>
+            </StackPanel>
+        </StackPanel>
+    
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="{Binding SelectedStore.Name}" FontSize="20"/>
+
+            <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Inventories}" 
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectedItem="{Binding SelectedBook, Mode=TwoWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ISBN13" Width="*" Binding="{Binding ISBN13}"/>
+                    <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
+                    <DataGridTextColumn Header="In stock" Width="*" Binding="{Binding Quantity}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>
