@@ -43,7 +43,7 @@
                 <Label Content="Quantity:"/>
                 <TextBox Text="{Binding SelectedBook.Quantity, 
                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                         Width="50"/>
+                         Width="40"/>
                 <Button Content="Remove Book" 
                         Command="{Binding RemoveBookCommand}" 
                         Width=" 100"
@@ -65,7 +65,7 @@
                 <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
                 <Label Content="Quantity:"/>
                 <TextBox Text="{Binding SelectedBookToAdd.Quantity, Mode=TwoWay}"
-                        Width="50"/>
+                        Width="40"/>
                 <Button Content="Add book" 
                         Command="{Binding AddBookCommand}"
                         Width="100" 
