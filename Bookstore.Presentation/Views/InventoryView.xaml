@@ -13,6 +13,10 @@
              d:Background="White">
     <UserControl.Resources>
         <converters:EmptyCollectionToMessageConverter x:Key="EmptyCollectionToMessageConverter"/>
+        <Style TargetType="{x:Type TextBlock}" x:Key="RightJustifiedTextCell">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
     </UserControl.Resources>
     
     <Grid>
@@ -74,13 +78,17 @@
                     Height="25"
                     Margin="10 30 10 0"
                     HorizontalAlignment="Center">
-                <Button Content="Save all changes" 
+                <Button Content="Save changes" 
                     Command="{Binding SaveInventoryCommand}"
                     Margin="0 0 25 0"
                     Width="100"/>
-                <Button Content="Undo all changes"
-                    Width="100"/>
+                <Button Content="Undo changes"
+                        Command="{Binding UndoChangesCommand}"
+                        Width="100"/>
             </StackPanel>
+            <TextBlock Text="{Binding Statusmessege}" 
+                       HorizontalAlignment="Center" 
+                       Margin="5"/>
         </StackPanel>
     
 
@@ -96,11 +104,27 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
-                  CanUserResizeColumns="False">
+                  CanUserResizeColumns="False"
+                  SelectionMode="Single">
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="5 2 5 2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ISBN13" Width="100" Binding="{Binding ISBN13}"/>
+                    <DataGridTextColumn Header="ISBN13" Width="auto" Binding="{Binding ISBN13}"/>
+                    <DataGridTextColumn Header="Quantity" Width="60" Binding="{Binding Quantity}" 
+                                        ElementStyle="{StaticResource RightJustifiedTextCell}"/>
                     <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
-                    <DataGridTextColumn Header="Quantity" Width="60" Binding="{Binding Quantity}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

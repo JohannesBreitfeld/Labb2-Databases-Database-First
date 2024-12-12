@@ -8,17 +8,24 @@ namespace Bookstore.Presentation.ViewModels
 {
     internal class InventoryDisplay : ViewModelBase
     {
-        private int _quantity = 0;
+        private int _quantity;
         public string ISBN13 { get; set; } = null!;
         public string Title { get; set; } = null!;
-       
+
+        public event Action QuantityChanged;
+
         public int Quantity 
         {
             get => _quantity;
             set
             {
-                _quantity = value;
-                RaisePropertyChanged();
+                if (_quantity != value) 
+                {
+                    _quantity = value;
+                    RaisePropertyChanged();
+
+                    QuantityChanged?.Invoke();
+                }
             }
         }
 
