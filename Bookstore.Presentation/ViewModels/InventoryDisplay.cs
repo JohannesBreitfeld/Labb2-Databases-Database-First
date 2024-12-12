@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace Bookstore.Presentation.ViewModels
 {
-    internal class InventoryDisplay
+    internal class InventoryDisplay : ViewModelBase
     {
+        private int _quantity = 0;
         public string ISBN13 { get; set; } = null!;
         public string Title { get; set; } = null!;
-        public int Quantity { get; set; }
+       
+        public int Quantity 
+        {
+            get => _quantity;
+            set
+            {
+                _quantity = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public override string ToString()
         {

@@ -29,7 +29,7 @@
             </StackPanel>
     
             <Separator/>
-            <Label Content="Inventory manager" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Label Content="Edit inventory" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
                 <Label Content="Selected book:" FontWeight="SemiBold"/>
                 <Label Content="{Binding SelectedBook.Title}"
@@ -95,11 +95,12 @@
                   ItemsSource="{Binding Inventories}" 
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  SelectedItem="{Binding SelectedBook, Mode=TwoWay}">
+                  SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                  CanUserResizeColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ISBN13" Width="*" Binding="{Binding ISBN13}"/>
+                    <DataGridTextColumn Header="ISBN13" Width="100" Binding="{Binding ISBN13}"/>
                     <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
-                    <DataGridTextColumn Header="In stock" Width="*" Binding="{Binding Quantity}"/>
+                    <DataGridTextColumn Header="Quantity" Width="60" Binding="{Binding Quantity}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

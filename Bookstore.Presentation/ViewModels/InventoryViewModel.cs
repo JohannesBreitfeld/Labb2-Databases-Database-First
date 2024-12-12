@@ -13,6 +13,7 @@ namespace Bookstore.Presentation.ViewModels
         private ObservableCollection<InventoryDisplay>? _addableBooks;
         private InventoryDisplay _selectedBookToAdd = null!;
 
+        public ObservableCollection<Store> Stores { get; set; }
 
         public InventoryDisplay SelectedBookToAdd
         {
@@ -24,9 +25,6 @@ namespace Bookstore.Presentation.ViewModels
                 AddBookCommand.RaiseCanExecuteChanged();
             }
         }
-
-        public ObservableCollection<Store> Stores { get; set; }
-
         public ObservableCollection<InventoryDisplay>? AddableBooks
         {
             get => _addableBooks; 
