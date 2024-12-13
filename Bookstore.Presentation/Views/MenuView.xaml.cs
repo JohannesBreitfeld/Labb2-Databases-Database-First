@@ -24,5 +24,13 @@ namespace Bookstore.Presentation.Views
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            int index = int.Parse(((Button)e.Source).Uid);
+
+            // Assuming GridCursor is a UIElement and part of the Grid
+            Grid.SetColumn(GridCursor, index);
+        }
     }
 }

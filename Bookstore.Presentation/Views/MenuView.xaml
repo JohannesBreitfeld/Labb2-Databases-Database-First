@@ -8,24 +8,50 @@
              mc:Ignorable="d" 
               d:DataContext="{d:DesignInstance Type=UI:MainViewModel,
                 IsDesignTimeCreatable=True}"
-             d:DesignHeight="60" d:DesignWidth="800">
+             d:DesignHeight="45" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
         
  
-            <Button Grid.Column="0" Content="Store Inventory Management"
+            <Button Uid="0"
+                    Grid.Column="0" 
+                    Content="Store Inventory Management"
+                    FontSize="15"
+                    FontWeight="Bold"
                     Command="{Binding SelectViewModelCommand}" 
-                    CommandParameter="{Binding InventoryViewModel}"/>
-            <Button Grid.Column="1" Content="Catalog Management"
-                Command="{Binding SelectViewModelCommand}" 
-                CommandParameter="{Binding BookCatalogViewModel}"/>
+                    CommandParameter="{Binding InventoryViewModel}"
+                    Click="Button_Click"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"/>
+            <Button Uid="1"
+                    Grid.Column="1" 
+                    Content="Catalog Management"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Command="{Binding SelectViewModelCommand}" 
+                    CommandParameter="{Binding BookCatalogViewModel}"
+                    Click="Button_Click"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"/>
            
-            <Button Grid.Column="2" Content="Author Management"/>
+            <Button Uid="2"  
+                    Grid.Column="2" 
+                    Content="Author Management"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Click="Button_Click"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"/>
 
+        <Grid Grid.Row="1" Grid.Column="0" x:Name="GridCursor" Background="DimGray" />
 
     </Grid>
 </UserControl>
