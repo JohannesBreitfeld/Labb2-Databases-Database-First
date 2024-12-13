@@ -10,7 +10,7 @@ namespace Bookstore.Presentation.ViewModels
     {
         private ViewModelBase? _selectedViewModel;
 
-        public InventoryViewModel InventoryViewModel { get; }
+        public InventoryViewModel? InventoryViewModel { get; }
         public ViewModelBase? SelectedViewModel
         {
             get => _selectedViewModel;
@@ -21,9 +21,9 @@ namespace Bookstore.Presentation.ViewModels
             }
         }
 
-        public MainViewModel()
+        public MainViewModel(InventoryViewModel inventoryViewModel)
         {
-            InventoryViewModel = new InventoryViewModel();
+            InventoryViewModel = inventoryViewModel;
             _selectedViewModel = InventoryViewModel;
         }
     }

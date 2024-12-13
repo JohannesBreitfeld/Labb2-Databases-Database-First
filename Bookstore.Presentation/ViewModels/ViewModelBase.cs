@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Bookstore.Presentation.ViewModels
 {
-    class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

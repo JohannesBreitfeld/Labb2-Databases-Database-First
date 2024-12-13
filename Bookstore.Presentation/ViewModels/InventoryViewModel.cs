@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Bookstore.Presentation.ViewModels
 {
-    internal class InventoryViewModel : ViewModelBase
+    public class InventoryViewModel : ViewModelBase
     {
         private bool _isLoading = true;
         private Store? _selectedStore;
@@ -16,8 +16,9 @@ namespace Bookstore.Presentation.ViewModels
         private InventoryDisplay _selectedBookToAdd = null!;
         private bool _hasUnsavedChanges;
        
-        public InventoryViewModel()
+        public InventoryViewModel(Func<MessageBoxResult> unsavedChangesMessegeBox)
         {
+            UnsavedChangesMessegeBox = unsavedChangesMessegeBox;
             RemoveBookCommand = new DelegateCommand(RemoveBook, (object? _) => _selectedBook != null);
             SaveInventoryCommand = new DelegateCommand(SaveInventoryChangesToDB, (object? _) => HasUnsavedChanges);
             AddBookCommand = new DelegateCommand(AddBook, (object? _) => SelectedBookToAdd != null);
@@ -88,7 +89,8 @@ namespace Bookstore.Presentation.ViewModels
                 {
                     if (_hasUnsavedChanges)
                     {
-                        var result = MessageBox.Show("You have unsaved changes. Would you like to save before changing store?", "Warning", MessageBoxButton.YesNo);
+                        var result = UnsavedChangesMessegeBox();
+                        
                         if (result == MessageBoxResult.Yes)
                         {
                             SaveInventoryChangesToDB(null!);
@@ -96,10 +98,6 @@ namespace Bookstore.Presentation.ViewModels
                         else if (result == MessageBoxResult.No)
                         {
                             HasUnsavedChanges = false;
-                        }
-                        else
-                        {
-                            return;
                         }
                     }
                     _selectedStore = value;
@@ -135,6 +133,7 @@ namespace Bookstore.Presentation.ViewModels
             }
         }
 
+        public Func<MessageBoxResult> UnsavedChangesMessegeBox;
         public DelegateCommand SaveInventoryCommand { get; }
         public DelegateCommand RemoveBookCommand { get; }
         public DelegateCommand AddBookCommand { get; }
@@ -211,7 +210,7 @@ namespace Bookstore.Presentation.ViewModels
             }
         }
 
-        private void SaveInventoryChangesToDB(object obj)
+        public void SaveInventoryChangesToDB(object obj)
         {
             try
             {

@@ -17,11 +17,23 @@ namespace Bookstore.Presentation
     /// </summary>
     public partial class MainWindow : Window
     {
+        public InventoryViewModel InventoryViewModel { get; }
+
         public MainWindow()
         {
-
             InitializeComponent();
-            DataContext = new MainViewModel();
+            
+            this.InventoryViewModel = new InventoryViewModel(UnsavedBookChanges);
+
+            DataContext = new MainViewModel(InventoryViewModel);
+        }
+       
+        
+        public MessageBoxResult UnsavedBookChanges()
+        {
+            var result = MessageBox.Show("You have unsaved changes that will be lost. Would you like to save before continuing?", "Warning", MessageBoxButton.YesNo);
+         
+            return result;
         }
     }
 }
