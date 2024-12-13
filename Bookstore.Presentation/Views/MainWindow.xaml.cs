@@ -18,14 +18,16 @@ namespace Bookstore.Presentation
     public partial class MainWindow : Window
     {
         public InventoryViewModel InventoryViewModel { get; }
+        public BookCatalogViewModel BookCatalogViewModel { get; }
 
         public MainWindow()
         {
             InitializeComponent();
             
             this.InventoryViewModel = new InventoryViewModel(UnsavedBookChanges);
+            this.BookCatalogViewModel = new BookCatalogViewModel();
 
-            DataContext = new MainViewModel(InventoryViewModel);
+            DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel);
         }
        
         

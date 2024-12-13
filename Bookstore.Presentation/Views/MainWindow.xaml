@@ -7,16 +7,20 @@
         xmlns:viewmodels="clr-namespace:Bookstore.Presentation.ViewModels"
         xmlns:views="clr-namespace:Bookstore.Presentation.Views"
         mc:Ignorable="d"
-        Title="MainWindow" MinHeight="600" MinWidth="800">
+        Title="Bookstore Management System" MinHeight="600" MinWidth="800">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
             <views:InventoryView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewmodels:BookCatalogViewModel}">
+            <views:BookCatalogView/>
         </DataTemplate>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <views:MenuView />

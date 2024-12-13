@@ -33,7 +33,7 @@
             </StackPanel>
     
             <Separator/>
-            <Label Content="Edit inventory" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Label Content="Update stock quantity" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
                 <Label Content="Selected book:" FontWeight="SemiBold"/>
                 <Label Content="{Binding SelectedBook.Title}"
@@ -51,7 +51,7 @@
                         Margin="40 0 0 0"/>
             </StackPanel>
             <Separator Margin="0 10 0 10"/>
-            <Label Content="Add book to inventory" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Label Content="Add book to store" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 0">
                 <Label Content="Choose a book to add:"/>
                 <ComboBox ItemsSource="{Binding AddableBooks, Converter={StaticResource EmptyCollectionToMessageConverter}}"
