@@ -12,8 +12,19 @@ namespace Bookstore.Presentation.ViewModels;
 public class BookCatalogViewModel : ViewModelBase
 {
 	private ObservableCollection<BookDisplay>? _books;
+    private BookDisplay _selectedBook;
 
-	public ObservableCollection<BookDisplay>? Books
+    public BookDisplay SelectedBook
+    {
+        get => _selectedBook; 
+        set 
+        {
+            _selectedBook = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public ObservableCollection<BookDisplay>? Books
 	{
 		get => _books; 
 		set 
@@ -35,13 +46,14 @@ public class BookCatalogViewModel : ViewModelBase
         var books = new ObservableCollection<BookDisplay>
             (
                 context.Books
-                    .Select
+                .Select
                         (
                             b => new BookDisplay()
                             {
                                 Isbn13 = b.Isbn13,
                                 Title = b.Title,
                                 Language = b.Language,
+                                Binding = b.Binding,
                                 Price = b.Price,
                                 DatePublished = b.DatePublished,
                                 Authors = new ObservableCollection<AuthorDisplay>(b.Authors

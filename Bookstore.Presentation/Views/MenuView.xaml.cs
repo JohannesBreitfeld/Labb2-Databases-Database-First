@@ -29,7 +29,6 @@ namespace Bookstore.Presentation.Views
         {
             int index = int.Parse(((Button)e.Source).Uid);
 
-            // Assuming GridCursor is a UIElement and part of the Grid
             Grid.SetColumn(GridCursor, index);
         }
     }

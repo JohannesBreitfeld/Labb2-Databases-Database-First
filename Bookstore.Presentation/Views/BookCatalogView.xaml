@@ -5,8 +5,135 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bookstore.Presentation.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:Background="White">
+    
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" x:Key="RightJustifiedTextCell">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
-        <DataGrid ItemsSource="{Binding Books}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--<StackPanel Grid.Column="0">
+            <StackPanel Margin="10 10 10 10">
+                <Label Content="Stores" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding Stores}"
+                          SelectedItem="{Binding SelectedStore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <Separator/>
+            <Label Content="Update stock quantity" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
+                <Label Content="Selected book:" FontWeight="SemiBold"/>
+                <Label Content="{Binding SelectedBook.Title}"
+                       Height="30"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+                <Label Content="Quantity:"/>
+                <TextBox Text="{Binding SelectedBook.Quantity, 
+                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="40"/>
+                <Button Content="Remove Book" 
+                        Command="{Binding RemoveBookCommand}" 
+                        Width=" 100"
+                        Height="25"
+                        Margin="40 0 0 0"/>
+            </StackPanel>
+            <Separator Margin="0 10 0 10"/>
+            <Label Content="Add book to store" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel Margin="10 0 10 0">
+                <Label Content="Choose a book to add:"/>
+                <ComboBox ItemsSource="{Binding AddableBooks, Converter={StaticResource EmptyCollectionToMessageConverter}}"
+                          SelectedItem="{Binding SelectedBookToAdd}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="NoWrap" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <Label Content="Quantity:"/>
+                    <TextBox Text="{Binding SelectedBookToAdd.Quantity, Mode=TwoWay}"
+                        Width="40"/>
+                    <Button Content="Add book" 
+                        Command="{Binding AddBookCommand}"
+                        Width="100" 
+                        Margin="40 0 0 0"
+                        Height="25"/>
+                </StackPanel>
+            </StackPanel>
+            <Separator Margin="0 0 0 10"/>
+            <StackPanel Orientation="Horizontal"
+                    Height="25"
+                    Margin="10 30 10 0"
+                    HorizontalAlignment="Center">
+                <Button Content="Save changes" 
+                    Command="{Binding SaveInventoryCommand}"
+                    Margin="0 0 25 0"
+                    Width="100"/>
+                <Button Content="Undo changes"
+                        Command="{Binding UndoChangesCommand}"
+                        Width="100"/>
+            </StackPanel>-->
+            <!--<TextBlock Text="{Binding Statusmessege}" 
+                       HorizontalAlignment="Center" 
+                       Margin="5"/>
+        </StackPanel>-->
+
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--<Label Content="Book catalog" 
+                   FontSize="15"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Margin="0 0 15 0"/>-->
+
+            <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Books}" 
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                  CanUserResizeColumns="False"
+                  SelectionMode="Single">
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="5 2 5 2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ISBN13" Width="auto" Binding="{Binding Isbn13}"/>
+                    <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
+                    <DataGridTextColumn Header="Author" Width="*" Binding="{Binding AuthorsString}"/>
+                    <DataGridTextColumn Header="Price" Width="60" Binding="{Binding Price, StringFormat=\{0:N2\}}" 
+                                        ElementStyle="{StaticResource RightJustifiedTextCell}"/>
+                    <DataGridTextColumn Header="Binding" Binding="{Binding Binding.Type}"/>
+                    <DataGridTextColumn Header="Language" Binding="{Binding Language.Name}"/>
+                    <DataGridTextColumn Header="Published" Width="*" 
+                                        Binding="{Binding DatePublished, StringFormat='yyyy-MM-dd'}"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
+
 </UserControl>
