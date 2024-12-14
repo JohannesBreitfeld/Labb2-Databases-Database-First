@@ -118,7 +118,7 @@ public class InventoryViewModel : ViewModelBase
                 
                 if (value == true)
                 {
-                    Statusmessege = "You have unsaved changes.";
+                    Statusmessege = "You have unsaved changes";
                 }
                 else
                 {

@@ -17,6 +17,15 @@ internal class MainViewModel : ViewModelBase
         get => _selectedViewModel;
         set
         {
+            if(value != InventoryViewModel)
+            {
+                InventoryViewModel!.SelectedStore = null;
+            }
+            else
+            {
+                InventoryViewModel!.SelectedStore = InventoryViewModel.Stores.FirstOrDefault();
+            }
+
             _selectedViewModel = value;
             RaisePropertyChanged();
         }
