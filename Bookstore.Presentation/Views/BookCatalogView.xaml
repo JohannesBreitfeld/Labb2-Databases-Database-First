@@ -4,7 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bookstore.Presentation.Views"
+             xmlns:UI="clr-namespace:Bookstore.Presentation.ViewModels"
+             xmlns:converters="clr-namespace:Bookstore.Presentation.Converters"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=UI:BookCatalogViewModel,
+               IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800"
              d:Background="White">
     
@@ -31,14 +36,14 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             
-                <Button Uid="11"
+            <Button Uid="11"
                     Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
                         Content="Edit book in catalog" FontSize="12" FontWeight="Bold"
                     Background="{x:Null}" BorderBrush="{x:Null}"
                     Margin="15 0 0 0"
                         Click="Button_Click"/>
 
-            <Button Uid="2"
+            <Button Uid="12"
                 Content="Add new book to catalog" FontSize="12" FontWeight="Bold"
                     Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"
                     Background="{x:Null}" BorderBrush="{x:Null}"
@@ -53,6 +58,59 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" x:Name="GridCursor" Background="DimGray" />
         </Grid>
+
+        <Grid Grid.Row="3" Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+               
+                <ColumnDefinition Width="*"/>
+            
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="10">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10">
+                <Label Content="ISBN13:" Width="75"/>
+                <TextBox Text="{Binding SelectedBook.Isbn13, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4" 
+                         Width="240"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Title:" Width="75"/>
+                    <TextBox Text="{Binding SelectedBook.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4"
+                             Width="240"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" 
+                        Margin="0 10 0 10">
+                <Label Content="Author/s:" 
+                       Width="75"/>
+                <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
+                          Padding="4"
+                          SelectedItem="{Binding SelectedBook.SelectedAuthor}"
+                          Width="240"/>
+                <Button Content="{fa:Icon Minus}"
+                        Margin="10 0 0 0"
+                        Width="20"
+                        ToolTip="Remove Author"/>
+                </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Add author:" 
+                        Width="75"/>
+                <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
+                            Padding="4"
+                            SelectedItem="{Binding SelectedBook.SelectedAuthor}"
+                            Width="240"/>
+                <Button Content="{fa:Icon Plus}"
+                        Margin="10 0 0 0"
+                        Width="20"
+                        ToolTip="Remove Author"/>
+            </StackPanel>
+            </StackPanel>
+
+        </Grid>
+        
+        
         
         
         
@@ -60,7 +118,7 @@
                   ItemsSource="{Binding Books}" 
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedBook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   CanUserResizeColumns="True"
                   SelectionMode="Single">
                 <DataGrid.CellStyle>

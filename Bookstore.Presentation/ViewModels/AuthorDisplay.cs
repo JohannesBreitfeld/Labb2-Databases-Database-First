@@ -18,4 +18,9 @@ public class AuthorDisplay
     public DateOnly? BirthDate { get; set; }
 
     //public virtual ICollection<Book> Isbn13s { get; set; } = new List<Book>();
+
+    public override string ToString()
+    {
+        return $"{FirstName} {LastName}";
+    }
 }
