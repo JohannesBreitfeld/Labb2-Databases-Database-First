@@ -87,9 +87,10 @@
                        Width="75"/>
                 <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
                           Padding="4"
-                          SelectedItem="{Binding SelectedBook.SelectedAuthor}"
+                          SelectedItem="{Binding SelectedBook.SelectedAuthor, Mode=TwoWay}"
                           Width="240"/>
                 <Button Content="{fa:Icon Minus}"
+                        Command="{Binding RemoveAuthorCommand}"
                         Margin="10 0 0 0"
                         Width="20"
                         ToolTip="Remove Author"/>
@@ -97,11 +98,12 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Add author:" 
                         Width="75"/>
-                <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
+                <ComboBox ItemsSource="{Binding AddableAuthors}" 
                             Padding="4"
-                            SelectedItem="{Binding SelectedBook.SelectedAuthor}"
+                            SelectedItem="{Binding AuthorToAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Width="240"/>
                 <Button Content="{fa:Icon Plus}"
+                        Command="{Binding AddAuthorCommand}"
                         Margin="10 0 0 0"
                         Width="20"
                         ToolTip="Remove Author"/>
