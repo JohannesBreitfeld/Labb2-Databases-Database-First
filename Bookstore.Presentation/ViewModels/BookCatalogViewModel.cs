@@ -1,14 +1,8 @@
 ﻿using Bookstore.Domain;
 using Bookstore.Infrastructure.Data.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -18,11 +12,12 @@ public class BookCatalogViewModel : ViewModelBase
     private BookDisplay? _selectedBook;
     private AuthorDisplay? _authorToAdd;
     private ObservableCollection<Language?>? _languages;
-
+    private string _isbnMessege = string.Empty;
     private ObservableCollection<AuthorDisplay>? _addableAuthors;
-
     private string _selectedBookIsbn = null!;
 
+    public bool ShowEditMode { get; set; } = true;
+    public bool ShowAddMode { get; set; } = false;
     public string SelectedBookIsbn
     {
         get => _selectedBookIsbn;
@@ -36,8 +31,6 @@ public class BookCatalogViewModel : ViewModelBase
             }
         }
     }
-
-    private string _isbnMessege = string.Empty;
     public string IsbnMessege 
     {
         get => _isbnMessege;
@@ -71,22 +64,16 @@ public class BookCatalogViewModel : ViewModelBase
         set
         {
             _selectedBook = value;
-            SelectedBook!.SelectedAuthor = SelectedBook.Authors.FirstOrDefault();
 
             RaisePropertyChanged();
             RemoveAuthorCommand.RaiseCanExecuteChanged();
+            RemoveBookCommand.RaiseCanExecuteChanged();
             GetAddableAuthors();
-            if(SelectedBook.Isbn13 != null)
+            if(SelectedBook != null)
             {
-                SelectedBookIsbn = SelectedBook.Isbn13;
-            }
-            if (SelectedBook.Language != null)
-            {
-                SelectedBook.Language = Languages?.FirstOrDefault(l => l.Id == SelectedBook.Language.Id);
-            }
-            if (SelectedBook.Binding != null)
-            {
-                SelectedBook.Binding = Bindings.FirstOrDefault(b => b.Id == SelectedBook.Binding.Id);
+                SelectedBookIsbn = SelectedBook.Isbn13;                              
+                SelectedBook.Language = Languages?.FirstOrDefault(l => l?.Id == SelectedBook.Language.Id);                       
+                SelectedBook.Binding = Bindings.First(b => b.Id == SelectedBook.Binding.Id);
             }
         }
     }
@@ -109,14 +96,20 @@ public class BookCatalogViewModel : ViewModelBase
             AddAuthorCommand.RaiseCanExecuteChanged();
         }
     }
-    public ObservableCollection<BookBinding> Bindings { get; set; }
+    public ObservableCollection<BookBinding> Bindings { get; set; } = null!;
 
+    public DelegateCommand SaveCommand { get; }
+    public DelegateCommand AddAuthorCommand { get; }
+    public DelegateCommand RemoveAuthorCommand { get; }
+    public DelegateCommand RemoveBookCommand { get; }
 
     public BookCatalogViewModel()
     {
         GetBooks();     
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
+        SaveCommand = new DelegateCommand(SaveBooks);
+        RemoveBookCommand = new DelegateCommand((object _) => Books?.Remove(SelectedBook!), (object? _) => SelectedBook != null);
     }
 
     private void RemoveAuthorFromBook(object obj)
@@ -137,10 +130,7 @@ public class BookCatalogViewModel : ViewModelBase
             GetAddableAuthors();
         }
     }
-
-    public DelegateCommand AddAuthorCommand { get; }
-    public DelegateCommand RemoveAuthorCommand { get; }
-    
+ 
     private void GetLanguages()
     {
         using (var context = new BookstoreContext())
@@ -148,6 +138,7 @@ public class BookCatalogViewModel : ViewModelBase
             Languages = new ObservableCollection<Language>(context.Languages.Distinct().ToList());
         }
     }
+   
     private void GetBindings()
     {
         using (var context = new BookstoreContext())
@@ -188,7 +179,7 @@ public class BookCatalogViewModel : ViewModelBase
         Books = books;
     }
     
-    public void SaveBooks()
+    public void SaveBooks(object obj = null!)
     {
         try
         {
