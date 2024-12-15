@@ -3,6 +3,7 @@ using Bookstore.Infrastructure.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -15,9 +16,86 @@ public class BookCatalogViewModel : ViewModelBase
     private string _isbnMessege = string.Empty;
     private ObservableCollection<AuthorDisplay>? _addableAuthors;
     private string _selectedBookIsbn = null!;
+    private bool _isLoading = true;
+    private bool _hasUnsavedChanges;
+    private bool _showEditMode = true;
 
-    public bool ShowEditMode { get; set; } = true;
-    public bool ShowAddMode { get; set; } = false;
+    public bool HasUnsavedChanges
+    {
+        get => _hasUnsavedChanges;
+        set
+        {
+            if (_hasUnsavedChanges != value)
+            {
+                _hasUnsavedChanges = value;
+
+                if (value == true)
+                {
+                    StatusMessege = "You have unsaved changes";
+                }
+                else
+                {
+                    StatusMessege = "";
+                }
+
+                RaisePropertyChanged(nameof(StatusMessege));
+                RaisePropertyChanged();
+                SaveCommand.RaiseCanExecuteChanged();
+                //UndoChangesCommand.RaiseCanExecuteChanged();
+            }
+        }
+    }
+
+    public string StatusMessege { get; set; }
+    public bool ShowEditMode 
+    { 
+        get => _showEditMode;
+        set
+        {
+            if(!value == _showEditMode)
+            {
+                //if (_hasUnsavedChanges)
+                //{
+                //    var result = UnsavedChangesMessegeBox();
+
+                //    if (result == MessageBoxResult.Yes)
+                //    {
+                //        SaveBooks(null!);
+                //    }
+                //    else if (result == MessageBoxResult.No)
+                //    {
+                //        HasUnsavedChanges = false;
+                //    }
+                //}
+            _showEditMode = value;
+            }
+        }
+
+    }
+    public bool ShowAddMode 
+    { 
+        get => _showAddMode; 
+        set 
+        {
+            if (!value == _showAddMode)
+            {
+                //if (_hasUnsavedChanges)
+                //{
+                //    var result = UnsavedChangesMessegeBox();
+
+                //    if (result == MessageBoxResult.Yes)
+                //    {
+                //        SaveBooks(null!);
+                //    }
+                //    else if (result == MessageBoxResult.No)
+                //    {
+                //        HasUnsavedChanges = false;
+                //    }
+                //}
+                _showAddMode = value;
+            }
+        }
+    }
     public string SelectedBookIsbn
     {
         get => _selectedBookIsbn;
@@ -71,9 +149,15 @@ public class BookCatalogViewModel : ViewModelBase
             GetAddableAuthors();
             if(SelectedBook != null)
             {
-                SelectedBookIsbn = SelectedBook.Isbn13;                              
-                SelectedBook.Language = Languages?.FirstOrDefault(l => l?.Id == SelectedBook.Language.Id);                       
+                _isLoading = true;
+           
+                SelectedBookIsbn = SelectedBook.Isbn13;
+                SelectedBook.Language = Languages?.FirstOrDefault(l => l?.Id == SelectedBook.Language.Id);
                 SelectedBook.Binding = Bindings.First(b => b.Id == SelectedBook.Binding.Id);
+              
+                _isLoading = false;
+                
+
             }
         }
     }
@@ -84,7 +168,16 @@ public class BookCatalogViewModel : ViewModelBase
 		{ 
 			_books = value;
 			RaisePropertyChanged();
-		}
+            if (_books != null)
+            {
+                _isLoading = true;
+                foreach (var book in _books)
+                {
+                    book.IsChanged += OnPropertyChanged;
+                }
+                _isLoading = false;
+            }
+        }
 	}
     public AuthorDisplay? AuthorToAdd
     {
@@ -97,19 +190,51 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
     public ObservableCollection<BookBinding> Bindings { get; set; } = null!;
+    
+    public Func<MessageBoxResult> UnsavedChangesMessegeBox;
+    private bool _showAddMode = false;
 
     public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand RemoveAuthorCommand { get; }
     public DelegateCommand RemoveBookCommand { get; }
+    public DelegateCommand ChangeModeCommand { get; }
 
-    public BookCatalogViewModel()
+    public BookCatalogViewModel(Func<MessageBoxResult> unsavedChangesPrompt)
     {
-        GetBooks();     
+        GetBooks();
+        UnsavedChangesMessegeBox = unsavedChangesPrompt;
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
-        SaveCommand = new DelegateCommand(SaveBooks);
-        RemoveBookCommand = new DelegateCommand((object _) => Books?.Remove(SelectedBook!), (object? _) => SelectedBook != null);
+        SaveCommand = new DelegateCommand(SaveBooks, (object? _) => HasUnsavedChanges == true);
+        RemoveBookCommand = new DelegateCommand(RemoveBookFromCatalog, (object? _) => SelectedBook != null);
+        ChangeModeCommand = new DelegateCommand(ChangeMode);
+    }
+
+    private void ChangeMode(object obj)
+    {
+        if(ShowAddMode == true)
+        {
+            ShowAddMode = false;
+            ShowEditMode = true;
+        }
+        else
+        {
+            ShowAddMode = true;
+            ShowEditMode = false;
+        }
+        RaisePropertyChanged(nameof(ShowAddMode));
+        RaisePropertyChanged(nameof(ShowEditMode));
+    }
+
+    private void RemoveBookFromCatalog(object obj = null!)
+    {
+        if (SelectedBook != null)
+        {
+            SelectedBook.IsChanged -= OnPropertyChanged;
+            Books?.Remove(SelectedBook!);
+            HasUnsavedChanges = true;
+        }
     }
 
     private void RemoveAuthorFromBook(object obj)
@@ -241,8 +366,8 @@ public class BookCatalogViewModel : ViewModelBase
                     context.Books.Remove(bookDB);
                 }
             }
-
-                context.SaveChanges();
+            HasUnsavedChanges = false;
+            context.SaveChanges();
             
         }
         catch (Exception ex)
@@ -279,6 +404,14 @@ public class BookCatalogViewModel : ViewModelBase
         catch (Exception ex)
         {
      
+        }
+    }
+
+    private void OnPropertyChanged()
+    {
+        if (!_isLoading)
+        {
+            HasUnsavedChanges = true;
         }
     }
 

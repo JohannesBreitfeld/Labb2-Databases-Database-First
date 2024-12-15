@@ -24,14 +24,14 @@ namespace Bookstore.Presentation
         {
             InitializeComponent();
             
-            this.InventoryViewModel = new InventoryViewModel(UnsavedBookChanges);
-            this.BookCatalogViewModel = new BookCatalogViewModel();
+            this.InventoryViewModel = new InventoryViewModel(UnsavedChanges);
+            this.BookCatalogViewModel = new BookCatalogViewModel(UnsavedChanges);
 
             DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel);
         }
        
         
-        public MessageBoxResult UnsavedBookChanges()
+        public MessageBoxResult UnsavedChanges()
         {
             var result = MessageBox.Show("You have unsaved changes that will be lost. Would you like to save before continuing?", "Warning", MessageBoxButton.YesNo);
          
