@@ -94,9 +94,9 @@ public class BookDisplay : ViewModelBase
             if(value != _language)
             {
                 _language = value;
-                RaisePropertyChanged();
                 IsChanged?.Invoke();
             }
+            RaisePropertyChanged();
         }
     }
     public string? AuthorsString

@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -14,11 +16,38 @@ public class BookCatalogViewModel : ViewModelBase
 {
 	private ObservableCollection<BookDisplay>? _books;
     private BookDisplay? _selectedBook;
-    private AuthorDisplay _authorToAdd;
+    private AuthorDisplay? _authorToAdd;
+    private ObservableCollection<Language?>? _languages;
 
-    private ObservableCollection<AuthorDisplay> _addableAuthors;
+    private ObservableCollection<AuthorDisplay>? _addableAuthors;
 
-    public ObservableCollection<AuthorDisplay> AddableAuthors
+    private string _selectedBookIsbn = null!;
+
+    public string SelectedBookIsbn
+    {
+        get => _selectedBookIsbn;
+        set
+        {
+             _selectedBookIsbn = value;
+             RaisePropertyChanged();
+            if (IsValidISBN13(value) && SelectedBook != null)
+            {
+                SelectedBook!.Isbn13 = _selectedBookIsbn;
+            }
+        }
+    }
+
+    private string _isbnMessege = string.Empty;
+    public string IsbnMessege 
+    {
+        get => _isbnMessege;
+        set
+        {
+            _isbnMessege = value;
+            RaisePropertyChanged();
+        }
+    }
+    public ObservableCollection<AuthorDisplay>? AddableAuthors
     {
         get => _addableAuthors; 
         set 
@@ -27,16 +56,38 @@ public class BookCatalogViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
-
+    public ObservableCollection<Language?>? Languages 
+    {
+        get => _languages;
+        set
+        {
+            _languages = value;
+            RaisePropertyChanged();
+        }
+    }
     public BookDisplay? SelectedBook
     {
         get => _selectedBook; 
-        set 
+        set
         {
             _selectedBook = value;
             SelectedBook!.SelectedAuthor = SelectedBook.Authors.FirstOrDefault();
+
             RaisePropertyChanged();
+            RemoveAuthorCommand.RaiseCanExecuteChanged();
             GetAddableAuthors();
+            if(SelectedBook.Isbn13 != null)
+            {
+                SelectedBookIsbn = SelectedBook.Isbn13;
+            }
+            if (SelectedBook.Language != null)
+            {
+                SelectedBook.Language = Languages?.FirstOrDefault(l => l.Id == SelectedBook.Language.Id);
+            }
+            if (SelectedBook.Binding != null)
+            {
+                SelectedBook.Binding = Bindings.FirstOrDefault(b => b.Id == SelectedBook.Binding.Id);
+            }
         }
     }
     public ObservableCollection<BookDisplay>? Books
@@ -48,22 +99,24 @@ public class BookCatalogViewModel : ViewModelBase
 			RaisePropertyChanged();
 		}
 	}
-    public AuthorDisplay AuthorToAdd
+    public AuthorDisplay? AuthorToAdd
     {
         get => _authorToAdd;
         set
         {
             _authorToAdd = value;
             RaisePropertyChanged();
+            AddAuthorCommand.RaiseCanExecuteChanged();
         }
     }
+    public ObservableCollection<BookBinding> Bindings { get; set; }
 
-	public BookCatalogViewModel()
+
+    public BookCatalogViewModel()
     {
-        GetBooks();
-
-        RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook);
-        AddAuthorCommand = new DelegateCommand(AddAuthorToBook);
+        GetBooks();     
+        RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
+        AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
     }
 
     private void RemoveAuthorFromBook(object obj)
@@ -87,10 +140,27 @@ public class BookCatalogViewModel : ViewModelBase
 
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand RemoveAuthorCommand { get; }
+    
+    private void GetLanguages()
+    {
+        using (var context = new BookstoreContext())
+        {
+            Languages = new ObservableCollection<Language>(context.Languages.Distinct().ToList());
+        }
+    }
+    private void GetBindings()
+    {
+        using (var context = new BookstoreContext())
+        {
+            Bindings = new ObservableCollection<BookBinding>(context.BookBindings.Distinct().ToList());
+        }
+    }
 
 	private void GetBooks()
 	{
-		using var context = new BookstoreContext();
+        GetLanguages();
+        GetBindings();
+        using var context = new BookstoreContext();
 
         var books = new ObservableCollection<BookDisplay>
             (
@@ -221,6 +291,28 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
 
+    private bool IsValidISBN13(string isbn13)
+    {
+        if (isbn13.Length != 13)
+        {
+            IsbnMessege = "ISBN13 must contain 13 digits";
+            return false;
+        }
+
+        if (!Regex.IsMatch(isbn13, @"^\d{13}$"))
+        {
+            IsbnMessege = "ISBN13 must contain 13 digits";
+            return false;
+        }
+
+        if (!(isbn13.StartsWith("978") || isbn13.StartsWith("979")))
+        {
+            IsbnMessege = "Valid ISBN13 starts with 978 or 979";
+            return false;
+        }
+        IsbnMessege = "";
+        return true;
+    }
 }
 
 

@@ -18,6 +18,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="TextAlignment" Value="Right"/>
         </Style>
+        <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTimeConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -65,50 +66,85 @@
                 <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-               
                 <ColumnDefinition Width="*"/>
-            
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Margin="10">
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10">
-                <Label Content="ISBN13:" Width="75"/>
-                <TextBox Text="{Binding SelectedBook.Isbn13, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4" 
+                    <Label Content="ISBN13:" Width="75"/>
+                    <TextBox Text="{Binding SelectedBookIsbn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4" 
                          Width="240"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Title:" Width="75"/>
+                    <Label Content="{Binding IsbnMessege}" Foreground="Red"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Title:" Width="75"/>
                     <TextBox Text="{Binding SelectedBook.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4"
                              Width="240"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" 
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" 
                         Margin="0 10 0 10">
-                <Label Content="Author/s:" 
+                    <Label Content="Author/s:" 
                        Width="75"/>
-                <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
+                    <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
                           Padding="4"
                           SelectedItem="{Binding SelectedBook.SelectedAuthor, Mode=TwoWay}"
                           Width="240"/>
-                <Button Content="{fa:Icon Minus}"
+                    <Button Content="{fa:Icon Minus}"
                         Command="{Binding RemoveAuthorCommand}"
                         Margin="10 0 0 0"
                         Width="20"
                         ToolTip="Remove Author"/>
                 </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Add author:" 
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Add author:" 
                         Width="75"/>
-                <ComboBox ItemsSource="{Binding AddableAuthors}" 
+                    <ComboBox ItemsSource="{Binding AddableAuthors}" 
                             Padding="4"
                             SelectedItem="{Binding AuthorToAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Width="240"/>
-                <Button Content="{fa:Icon Plus}"
+                    <Button Content="{fa:Icon Plus}"
                         Command="{Binding AddAuthorCommand}"
                         Margin="10 0 0 0"
                         Width="20"
-                        ToolTip="Remove Author"/>
+                        ToolTip="Add Author"/>
+                </StackPanel>
             </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="10">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Language" Width="75"/>
+                    <ComboBox ItemsSource="{Binding Languages}"
+                              SelectedItem="{Binding SelectedBook.Language, 
+                                             Mode=TwoWay, 
+                                             UpdateSourceTrigger=PropertyChanged}"
+                              Width="240"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <Label Content="Binding" Width="75"/>
+                    <ComboBox ItemsSource="{Binding Bindings}"
+                  SelectedItem="{Binding SelectedBook.Binding, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Width="240"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Publishing date" Width="75"/>
+                    <DatePicker Width="240" 
+                                SelectedDate="{Binding SelectedBook.DatePublished, 
+                                Converter={StaticResource DateOnlyToDateTimeConverter},
+                                Mode=TwoWay, 
+                                UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <Label Content="Price" Width="75"/>
+                    <TextBox Width="75" 
+                Text="{Binding SelectedBook.Price, StringFormat=\{0:N2\},Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+
+                </StackPanel>
             </StackPanel>
+
+
 
         </Grid>
         
