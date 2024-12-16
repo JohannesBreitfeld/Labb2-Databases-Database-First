@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:UI="clr-namespace:Bookstore.Presentation.ViewModels"
+             xmlns:converters="clr-namespace:Bookstore.Presentation.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bookstore.Presentation.Views"
              mc:Ignorable="d" 
@@ -12,7 +13,7 @@
              d:Background="White">
 
     <UserControl.Resources>
-
+        <converters:DateOnlyToDateTimeConverter x:Key="DateOnlyToDateTimeConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -21,58 +22,75 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <!--<StackPanel Grid.Column="0">
-            <StackPanel Margin="10 10 10 10">
-                <Label Content="Stores" FontWeight="Bold" HorizontalAlignment="Center"/>
-                <ComboBox/>
+        <StackPanel Grid.Column="0" Margin="10">
+            
+            <Label Content="EDIT SELECTED AUTHOR" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="First name:" 
+                       Width="80"/>
+                <TextBox Text="{Binding SelectedAuthor.FirstName}"
+                         Width="165"
+                         Padding="4"/>
             </StackPanel>
-
+            <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                <Label Content="Last name:" 
+                       Width="80"/>
+                <TextBox Text="{Binding SelectedAuthor.LastName, 
+                            Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="165" Padding="4"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Date of birth:" 
+                        Width="80"/>
+                <DatePicker SelectedDate="{Binding SelectedAuthor.BirthDate, 
+                            Converter={StaticResource DateOnlyToDateTimeConverter},
+                            Mode=TwoWay, 
+                            UpdateSourceTrigger=PropertyChanged}"
+                            Width="165"/>
+            </StackPanel>
+            <Button Height="25" 
+                    Content="Delete author" 
+                    Margin="0 10 0 20" 
+                    Width="245"
+                    HorizontalAlignment="Left"/>
             <Separator/>
-            <Label Content="Update stock quantity" FontWeight="Bold" HorizontalAlignment="Center"/>
-            <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
-                <Label Content="Selected book:" FontWeight="SemiBold"/>
-                <Label 
-                       Height="30"/>
+            <Label Content="ADD NEW AUTHOR" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center"
+                   Margin="10"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="First name:" 
+            Width="80"/>
+                <TextBox Text="{Binding SelectedAuthor.FirstName}"
+              Width="165"
+              Padding="4"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
-                <Label Content="Quantity:"/>
-                <TextBox Text="{Binding SelectedBook.Quantity, 
-                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                         Width="40" Padding="4"/>
-                <Button Content="Remove Book" 
-                        Command="{Binding RemoveBookCommand}" 
-                        Width=" 100"
-                        Height="25"
-                        Margin="40 0 0 0"/>
+            <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                <Label Content="Last name:" 
+            Width="80"/>
+                <TextBox Text="{Binding SelectedAuthor.LastName, 
+                 Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+              Width="165" Padding="4"/>
             </StackPanel>
-            <Separator Margin="0 10 0 10"/>
-            <Label Content="Add book to store" FontWeight="Bold" HorizontalAlignment="Center"/>
-            <StackPanel Margin="10 0 10 0">
-                <Label Content="Choose a book to add:"/>
-                <ComboBox ItemsSource="{Binding AddableBooks, Converter={StaticResource EmptyCollectionToMessageConverter}}"
-                          SelectedItem="{Binding SelectedBookToAdd}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" TextWrapping="NoWrap" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
-                    <Label Content="Quantity:"/>
-                    <TextBox Text="{Binding SelectedBookToAdd.Quantity, Mode=TwoWay}"
-                        Width="40" Padding="4"/>
-                    <Button Content="Add book" 
-                        Command="{Binding AddBookCommand}"
-                        Width="100" 
-                        Margin="40 0 0 0"
-                        Height="25"/>
-                </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Date of birth:" 
+             Width="80"/>
+                <DatePicker SelectedDate="{Binding SelectedAuthor.BirthDate, 
+                 Converter={StaticResource DateOnlyToDateTimeConverter},
+                 Mode=TwoWay, 
+                 UpdateSourceTrigger=PropertyChanged}"
+                 Width="165"/>
             </StackPanel>
-            <Separator Margin="0 0 0 10"/>
-            <StackPanel Orientation="Horizontal"
+            <Button Height="25" 
+         Content="Add author" 
+         Margin="0 10 0 20" 
+         Width="245"
+         HorizontalAlignment="Left"/>
+
+            <StackPanel Orientation="Horizontal" 
                     Height="25"
                     Margin="10 30 10 0"
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Left">
                 <Button Content="Save changes" 
                     Command="{Binding SaveInventoryCommand}"
                     Margin="0 0 25 0"
@@ -84,7 +102,7 @@
             <TextBlock Text="{Binding Statusmessege}" 
                        HorizontalAlignment="Center" 
                        Margin="5"/>
-        </StackPanel>-->
+        </StackPanel>
 
 
         <DataGrid Grid.Column="1" Margin="0 10 0 0"
