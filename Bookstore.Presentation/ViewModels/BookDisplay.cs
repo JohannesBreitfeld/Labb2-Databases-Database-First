@@ -7,9 +7,9 @@ public class BookDisplay : ViewModelBase
 {
     private AuthorDisplay? _selectedAuthor;
     private string? _authorsString;
-    private string _isbn13 = null!;
+    private string _isbn13 = string.Empty;
     private string _title = null!;
-    private decimal _price;
+    private decimal _price = 0;
     private DateOnly? _datePublished;
     private BookBinding _binding = null!;
     private Language? _language;

@@ -48,7 +48,7 @@
                     Background="{x:Null}" BorderBrush="{x:Null}"
                     Margin="15 0 0 0"
                     Click="Button_Click"
-                    Command="{Binding ChangeModeCommand}"/>
+                    Command="{Binding EditModeCommand}"/>
 
             <Button Uid="12"
                     Content="Add new book to catalog" 
@@ -59,7 +59,7 @@
                     HorizontalAlignment="Center"
                     Background="{x:Null}" BorderBrush="{x:Null}"
                     Click="Button_Click"
-                    Command="{Binding ChangeModeCommand}"/>
+                    Command="{Binding AddModeCommand}"/>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -71,7 +71,7 @@
             <Grid Grid.Column="1" x:Name="GridCursor" Background="DimGray" />
         </Grid>
 
-        <Grid Grid.Row="3" Visibility="{Binding ShowEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="0"/>
@@ -85,7 +85,7 @@
                     <Label Content="ISBN13:" Width="75"/>
                     <TextBox Text="{Binding SelectedBookIsbn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4" 
                          Width="240"/>
-                    <Label Content="{Binding IsbnMessege}" Foreground="Red"/>
+                    <Label Content="{Binding IsbnMessage}" Foreground="Red"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Title:" Width="75"/>
@@ -123,10 +123,16 @@
                     <Button Content="Save changes to catalog" 
                             Command="{Binding SaveCommand}"
                             Margin="0 0 25 0" 
-                            Width="145"/>
-                    <Button Content="Undo all changes" Width="145"/>
+                            Width="145"
+                            Height="25"
+                            ToolTip="Save all changes"/>
+                    <Button Content="Undo all changes" 
+                            Command="{Binding UndoChangesCommand}"
+                            Width="145"
+                            Height="25"
+                            ToolTip="Undo all changes since last save"/>
                 </StackPanel>
-                <Label Content="{Binding StatusMessege}" Margin="95 0 0 0"/>
+                <Label Content="{Binding StatusMessage}" Margin="95 0 0 0"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Margin="10">
@@ -162,24 +168,134 @@
                                     StringFormat=\{0:N2\},Mode=TwoWay, 
                                     UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Margin="10 0 0 0">
+                <StackPanel Margin="10 0 0 0" Visibility="{Binding ShowEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Button Content="Remove book from catalog" 
-                 Command="{Binding RemoveBookCommand}"
-                 Width="150"
+                            Command="{Binding RemoveBookCommand}"
+                            Width="150"
+                            Height="25"
                             Margin="155 0 0 0"
                             HorizontalAlignment="Left"/>
                 </StackPanel>
-                
+                <StackPanel Margin="10 0 0 0" Visibility="{Binding ShowAddMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Button Content="Add book to catalog" 
+                            ToolTip="Add current book to book catalog"
+                            Command="{Binding AddBookToCatalogCommand}"
+                            Height="25"
+                            Width="150"
+                            Margin="155 0 0 0"
+                            HorizontalAlignment="Left"/>
+                    <Label Content="{Binding AddBookMessage}"/>
+                </StackPanel>
             </StackPanel>
-           
-
-
         </Grid>
         
-        
-        
-        
-        
+<!--Add book mode-->
+        <!--<Grid Grid.Row="3" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="10">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10">
+                    <Label Content="ISBN13:" Width="75"/>
+                    <TextBox Text="{Binding bookToAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4" 
+                 Width="240"/>
+                    <Label Content="{Binding IsbnMessage}" Foreground="Red"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Title:" Width="75"/>
+                    <TextBox Text="{Binding BookToAdd.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="4"
+                     Width="240"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" 
+                Margin="0 10 0 10">
+                    <Label Content="Author/s:" 
+               Width="75"/>
+                    <ComboBox ItemsSource="{Binding BookToAdd.Authors}" 
+                  Padding="4"
+                  SelectedItem="{Binding BookToAdd.SelectedAuthor, Mode=TwoWay}"
+                  Width="240"/>
+                    <Button Content="{fa:Icon Minus}"
+                Command="{Binding RemoveAuthorCommand}"
+                Margin="10 0 0 0"
+                Width="20"
+                ToolTip="Remove Author"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Add author:" 
+                           Width="75"/>
+                    <ComboBox ItemsSource="{Binding AddableAuthors}" 
+                              Padding="4"
+                              SelectedItem="{Binding BookToAdd.Authors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Width="240"/>
+                    <Button Content="{fa:Icon Plus}"
+                            Command="{Binding AddAuthorCommand}"
+                            Margin="10 0 0 0"
+                            Width="20"
+                            ToolTip="Add Author"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                    <Button Content="Save changes to catalog" 
+                            Command="{Binding SaveCommand}"
+                            ToolTip="Save all changes"
+                            Margin="0 0 25 0" 
+                            Width="145"/>
+                    <Button Content="Undo all changes" 
+                            Command="{Binding UndoChangesCommand}"
+                            Width="145"
+                            Height="25"
+                            ToolTip="Undo all changes since last save"/>
+                </StackPanel>
+                <Label Content="{Binding StatusMessage}" Margin="95 0 0 0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="10">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Language" Width="100"/>
+                    <ComboBox ItemsSource="{Binding Languages}"
+                      SelectedItem="{Binding BookToAdd.Language, 
+                                     Mode=TwoWay, 
+                                     UpdateSourceTrigger=PropertyChanged}"
+                      Width="215"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <Label Content="Binding" Width="100"/>
+                    <ComboBox ItemsSource="{Binding Bindings}"
+                      SelectedItem="{Binding BookToAdd.Binding, 
+                                    Mode=TwoWay, 
+                                    UpdateSourceTrigger=PropertyChanged}"
+                      SelectedIndex="1"
+                      Width="215"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Publishing date" Width="100"/>
+                    <DatePicker Width="215" 
+                        SelectedDate="{Binding BookToAdd.DatePublished, 
+                        Converter={StaticResource DateOnlyToDateTimeConverter},
+                        Mode=TwoWay, 
+                        UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <Label Content="Price" Width="100"/>
+                    <TextBox Width="75" 
+                     Text="{Binding BookToAdd.Price, 
+                            StringFormat=\{0:N2\},Mode=TwoWay, 
+                            UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>-->
+              
+
+            <!--</StackPanel>-->
+
+
+
+        <!--</Grid>-->
+
+
+
         <DataGrid Grid.Row="4" 
                   ItemsSource="{Binding Books}" 
                   AutoGenerateColumns="False"

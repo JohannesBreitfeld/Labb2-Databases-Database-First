@@ -16,10 +16,16 @@ public class BookCatalogViewModel : ViewModelBase
     private string _isbnMessege = string.Empty;
     private ObservableCollection<AuthorDisplay>? _addableAuthors;
     private string _selectedBookIsbn = null!;
-    private bool _isLoading = true;
+    private bool _isLoading = false;
     private bool _hasUnsavedChanges;
     private bool _showEditMode = true;
-
+    private bool _showAddMode = false;
+   
+    public ObservableCollection<BookBinding> Bindings { get; set; } = null!;
+    public BookDisplay BookToAdd { get; set; }
+    public string? StatusMessage { get; set; }
+    public string? AddBookMessage { get; set; }
+    
     public bool HasUnsavedChanges
     {
         get => _hasUnsavedChanges;
@@ -31,22 +37,20 @@ public class BookCatalogViewModel : ViewModelBase
 
                 if (value == true)
                 {
-                    StatusMessege = "You have unsaved changes";
+                    StatusMessage = "You have unsaved changes";
                 }
                 else
                 {
-                    StatusMessege = "";
+                    StatusMessage = "";
                 }
 
-                RaisePropertyChanged(nameof(StatusMessege));
+                RaisePropertyChanged(nameof(StatusMessage));
                 RaisePropertyChanged();
                 SaveCommand.RaiseCanExecuteChanged();
-                //UndoChangesCommand.RaiseCanExecuteChanged();
+                UndoChangesCommand.RaiseCanExecuteChanged();
             }
         }
     }
-
-    public string StatusMessege { get; set; }
     public bool ShowEditMode 
     { 
         get => _showEditMode;
@@ -109,7 +113,7 @@ public class BookCatalogViewModel : ViewModelBase
             }
         }
     }
-    public string IsbnMessege 
+    public string IsbnMessage 
     {
         get => _isbnMessege;
         set
@@ -146,18 +150,20 @@ public class BookCatalogViewModel : ViewModelBase
             RaisePropertyChanged();
             RemoveAuthorCommand.RaiseCanExecuteChanged();
             RemoveBookCommand.RaiseCanExecuteChanged();
+            AddBookToCatalogCommand.RaiseCanExecuteChanged();
             GetAddableAuthors();
             if(SelectedBook != null)
             {
                 _isLoading = true;
            
                 SelectedBookIsbn = SelectedBook.Isbn13;
-                SelectedBook.Language = Languages?.FirstOrDefault(l => l?.Id == SelectedBook.Language.Id);
-                SelectedBook.Binding = Bindings.First(b => b.Id == SelectedBook.Binding.Id);
+                SelectedBook.Language = Languages?.FirstOrDefault(l => l?.Id == SelectedBook?.Language?.Id);
+                if (SelectedBook.Binding != null)
+                {
+                    SelectedBook.Binding = Bindings.First(b => b.Id == SelectedBook.Binding.Id);
+                }
               
                 _isLoading = false;
-                
-
             }
         }
     }
@@ -189,39 +195,85 @@ public class BookCatalogViewModel : ViewModelBase
             AddAuthorCommand.RaiseCanExecuteChanged();
         }
     }
-    public ObservableCollection<BookBinding> Bindings { get; set; } = null!;
-    
+   
     public Func<MessageBoxResult> UnsavedChangesMessegeBox;
-    private bool _showAddMode = false;
-
+  
     public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand RemoveAuthorCommand { get; }
     public DelegateCommand RemoveBookCommand { get; }
-    public DelegateCommand ChangeModeCommand { get; }
+    public DelegateCommand AddModeCommand { get; }
+    public DelegateCommand EditModeCommand { get; }
+    public DelegateCommand UndoChangesCommand { get; }
+    public DelegateCommand AddBookToCatalogCommand { get; }
 
     public BookCatalogViewModel(Func<MessageBoxResult> unsavedChangesPrompt)
     {
         GetBooks();
+        BookToAdd = new BookDisplay();
         UnsavedChangesMessegeBox = unsavedChangesPrompt;
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
         SaveCommand = new DelegateCommand(SaveBooks, (object? _) => HasUnsavedChanges == true);
         RemoveBookCommand = new DelegateCommand(RemoveBookFromCatalog, (object? _) => SelectedBook != null);
-        ChangeModeCommand = new DelegateCommand(ChangeMode);
+        AddModeCommand = new DelegateCommand(ChangeToAddMode);
+        EditModeCommand = new DelegateCommand(ChangeToEditMode);
+        UndoChangesCommand = new DelegateCommand(GetBooks, (object? _) => HasUnsavedChanges == true);
+        AddBookToCatalogCommand = new DelegateCommand(AddBookToCatalog);
     }
 
-    private void ChangeMode(object obj)
+    private void AddBookToCatalog(object obj)
     {
-        if(ShowAddMode == true)
+        if (BookToAdd == null)
         {
-            ShowAddMode = false;
-            ShowEditMode = true;
+            return;
         }
-        else
+        if (!IsValidISBN13(BookToAdd!.Isbn13))
+        {
+            AddBookMessage = "Invalid ISBN13";
+            RaisePropertyChanged(nameof(AddBookMessage));
+            return;
+        }
+        if (BookToAdd.Price < 0)
+        {
+            AddBookMessage = "Books must be assigned a non negative price";
+            RaisePropertyChanged(nameof(AddBookMessage));
+            return;
+        }
+        if (BookToAdd.Binding == null)
+        {
+            AddBookMessage = "Books must be assigned a binding";
+            RaisePropertyChanged(nameof(AddBookMessage));
+            return;
+        }
+        AddBookMessage = string.Empty;
+        RaisePropertyChanged(nameof(AddBookMessage));
+        Books?.Add(BookToAdd);
+        HasUnsavedChanges = true;
+        BookToAdd = new BookDisplay();
+    }
+
+    private void ChangeToEditMode(object obj)
+    {
+        if (!ShowEditMode)
+        {
+            ShowEditMode = true;
+            ShowAddMode = false;
+            IsbnMessage = "";
+            SelectedBook = Books?.FirstOrDefault();
+        }
+        RaisePropertyChanged(nameof(ShowAddMode));
+        RaisePropertyChanged(nameof(ShowEditMode));
+    }
+
+    private void ChangeToAddMode(object obj)
+    {
+       if(!ShowAddMode)
         {
             ShowAddMode = true;
             ShowEditMode = false;
+            IsbnMessage = "";
+            SelectedBook = BookToAdd;
         }
         RaisePropertyChanged(nameof(ShowAddMode));
         RaisePropertyChanged(nameof(ShowEditMode));
@@ -243,6 +295,7 @@ public class BookCatalogViewModel : ViewModelBase
         {
             SelectedBook.Authors.Remove(SelectedBook.SelectedAuthor);
             SelectedBook.RaisePropertyChanged(nameof(SelectedBook.AuthorsString));
+            HasUnsavedChanges = true;
         }
     }
 
@@ -253,6 +306,7 @@ public class BookCatalogViewModel : ViewModelBase
             SelectedBook.Authors.Add(AuthorToAdd);
             SelectedBook.RaisePropertyChanged(nameof(SelectedBook.AuthorsString));
             GetAddableAuthors();
+            HasUnsavedChanges = true; 
         }
     }
  
@@ -272,7 +326,7 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
 
-	private void GetBooks()
+	private void GetBooks(object obj = null!)
 	{
         GetLanguages();
         GetBindings();
@@ -300,7 +354,7 @@ public class BookCatalogViewModel : ViewModelBase
                         }
                 )
             );
-
+        HasUnsavedChanges = false;
         Books = books;
     }
     
@@ -372,6 +426,7 @@ public class BookCatalogViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            StatusMessage = $"Could not save to database : {ex.Message}";
         }
     }
 
@@ -386,12 +441,14 @@ public class BookCatalogViewModel : ViewModelBase
                 var authors = await context.Authors.ToListAsync();
 
                 var currentAuthors = SelectedBook.Authors.Select(a => a.Id).ToList();
-                var addableAuthors = authors.Where(a => !currentAuthors.Contains(a.Id)).ToList();
+                var addableAuthorsExistingBook = authors.Where(a => !currentAuthors.Contains(a.Id)).ToList();
 
-                if (addableAuthors != null)
+
+
+                if (addableAuthorsExistingBook != null)
                 {
                     AddableAuthors = new ObservableCollection<AuthorDisplay>(
-                    addableAuthors.Select(a => new AuthorDisplay
+                    addableAuthorsExistingBook.Select(a => new AuthorDisplay
                     {
                         Id = a.Id,
                         FirstName = a.FirstName,
@@ -403,7 +460,7 @@ public class BookCatalogViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-     
+            StatusMessage = $"Could not connect to database : {ex.Message}";
         }
     }
 
@@ -419,22 +476,22 @@ public class BookCatalogViewModel : ViewModelBase
     {
         if (isbn13.Length != 13)
         {
-            IsbnMessege = "ISBN13 must contain 13 digits";
+            IsbnMessage = "ISBN13 must contain 13 digits";
             return false;
         }
 
         if (!Regex.IsMatch(isbn13, @"^\d{13}$"))
         {
-            IsbnMessege = "ISBN13 must contain 13 digits";
+            IsbnMessage = "ISBN13 must contain 13 digits";
             return false;
         }
 
         if (!(isbn13.StartsWith("978") || isbn13.StartsWith("979")))
         {
-            IsbnMessege = "Valid ISBN13 starts with 978 or 979";
+            IsbnMessage = "Valid ISBN13 starts with 978 or 979";
             return false;
         }
-        IsbnMessege = "";
+        IsbnMessage = "";
         return true;
     }
 }
