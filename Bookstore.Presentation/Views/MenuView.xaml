@@ -23,7 +23,7 @@
  
             <Button Uid="0"
                     Grid.Column="0" 
-                    Content="Store Inventory Management"
+                    Content="STORE INVENTORY MANAGEMENT"
                     FontSize="15"
                     FontWeight="Bold"
                     Command="{Binding SelectViewModelCommand}" 
@@ -33,7 +33,7 @@
                     BorderBrush="{x:Null}"/>
             <Button Uid="1"
                     Grid.Column="1" 
-                    Content="Catalog Management"
+                    Content="CATALOG MANAGEMENT"
                     FontSize="15"
                     FontWeight="Bold"
                     Command="{Binding SelectViewModelCommand}" 
@@ -44,9 +44,11 @@
            
             <Button Uid="2"  
                     Grid.Column="2" 
-                    Content="Author Management"
+                    Content="AUTHOR MANAGEMENT"
                     FontSize="15"
                     FontWeight="Bold"
+                    Command="{Binding SelectViewModelCommand}" 
+                    CommandParameter="{Binding AuthorViewModel}"
                     Click="Button_Click"
                     Background="{x:Null}"
                     BorderBrush="{x:Null}"/>

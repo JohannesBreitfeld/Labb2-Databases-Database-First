@@ -7,10 +7,11 @@ using System.Windows;
 
 namespace Bookstore.Presentation.ViewModels;
 
-internal class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase
 {
     private ViewModelBase? _selectedViewModel;
 
+    public AuthorViewModel? AuthorViewModel { get; }
     public InventoryViewModel? InventoryViewModel { get; }
     public BookCatalogViewModel? BookCatalogViewModel { get; }
     public ViewModelBase? SelectedViewModel
@@ -35,7 +36,6 @@ internal class MainViewModel : ViewModelBase
                 {
                     BookCatalogViewModel!.SaveBooks();
                 }
-        
             }
 
             _selectedViewModel = value;
@@ -43,10 +43,11 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-    public MainViewModel(InventoryViewModel inventoryViewModel, BookCatalogViewModel bookCatalogViewModel)
+    public MainViewModel(InventoryViewModel inventoryViewModel, BookCatalogViewModel bookCatalogViewModel, AuthorViewModel authorViewModel)
     {
         InventoryViewModel = inventoryViewModel;
         BookCatalogViewModel = bookCatalogViewModel;
+        AuthorViewModel = authorViewModel;
         _selectedViewModel = InventoryViewModel;
 
         SelectViewModelCommand = new DelegateCommand(SetViewModel);

@@ -19,6 +19,7 @@ namespace Bookstore.Presentation
     {
         public InventoryViewModel InventoryViewModel { get; }
         public BookCatalogViewModel BookCatalogViewModel { get; }
+        public AuthorViewModel AuthorViewModel { get; }
 
         public MainWindow()
         {
@@ -26,8 +27,9 @@ namespace Bookstore.Presentation
             
             this.InventoryViewModel = new InventoryViewModel(UnsavedChanges);
             this.BookCatalogViewModel = new BookCatalogViewModel(UnsavedChanges);
+            this.AuthorViewModel = new AuthorViewModel();
 
-            DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel);
+            DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel, AuthorViewModel);
         }
        
         
