@@ -2,17 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:UI="clr-namespace:Bookstore.Presentation.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bookstore.Presentation.Views"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=UI:AuthorViewModel,
+             IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800"
              d:Background="White">
 
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBlock}" x:Key="RightJustifiedTextCell">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="TextAlignment" Value="Right"/>
-        </Style>
+
     </UserControl.Resources>
 
     <Grid>
@@ -87,9 +87,9 @@
         </StackPanel>-->
 
 
-            <DataGrid Grid.Row="1" 
+        <DataGrid Grid.Column="1" Margin="0 10 0 0"
                   ItemsSource="{Binding Authors}" 
-                  AutoGenerateColumns="True"
+                  AutoGenerateColumns="False"
                   IsReadOnly="True"
                   SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}"
                   CanUserResizeColumns="False"
@@ -100,7 +100,11 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type DataGridCell}">
-                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                    <Border Padding="{TemplateBinding Padding}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            Background="{TemplateBinding Background}" 
+                                            SnapsToDevicePixels="True">
                                         <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                     </Border>
                                 </ControlTemplate>
@@ -108,12 +112,18 @@
                         </Setter>
                     </Style>
                 </DataGrid.CellStyle>
-                <!--<DataGrid.Columns>
-                    <DataGridTextColumn Header="ISBN13" Width="auto" Binding="{Binding ISBN13}"/>
-                    <DataGridTextColumn Header="Quantity" Width="60" Binding="{Binding Quantity}" 
-                                        ElementStyle="{StaticResource RightJustifiedTextCell}"/>
-                    <DataGridTextColumn Header="Title" Width="*" Binding="{Binding Title}"/>
-                </DataGrid.Columns>-->
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Firstname" Binding="{Binding FirstName}"/>
+                    <DataGridTextColumn Header="Lastname"  Binding="{Binding LastName}"/>
+                    <DataGridTextColumn Header="Date of birth" Binding="{Binding BirthDate, StringFormat='yyyy-MM-dd'}"/>
+                    <DataGridTemplateColumn Header="Books authored">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TitlesString}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
             </DataGrid>
         </Grid>
 

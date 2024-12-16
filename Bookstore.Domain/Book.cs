@@ -21,4 +21,9 @@ public partial class Book
     public virtual Language? Language { get; set; }
 
     public virtual ICollection<Author> Authors { get; set; } = new List<Author>();
+
+    public override string ToString()
+    {
+        return Title;
+    }
 }

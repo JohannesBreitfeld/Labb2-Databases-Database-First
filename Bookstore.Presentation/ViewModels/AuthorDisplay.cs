@@ -1,24 +1,69 @@
 ﻿using Bookstore.Domain;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Bookstore.Presentation.ViewModels;
 
-public class AuthorDisplay
+public class AuthorDisplay : ViewModelBase
 {
-    public int Id { get; set; }
+    private int _id;
+    private string _firstName = null!;
+    private string _lastName = null!;
+    private DateOnly? _birthDate;
+    private ObservableCollection<BookDisplay> _isbn13s = new ObservableCollection<BookDisplay>();
 
-    public string FirstName { get; set; } = null!;
+    private string? _titlesString;
 
-    public string LastName { get; set; } = null!;
+    public string? TitlesString
+    {
+        get
+        {
+            string titles = string.Empty;
 
-    public DateOnly? BirthDate { get; set; }
+            foreach (var book in Isbn13s)
+            {
+                if (Isbn13s.Count == 1 || book == Isbn13s.LastOrDefault())
+                {
+                        titles += book.Title;
+                }
+                else
+                {
+                    titles += $"{book.Title}, ";
+                }
+            }
 
-    //public virtual ICollection<Book> Isbn13s { get; set; } = new List<Book>();
+            TitlesString = titles;
+            return titles;
+        }
+        set
+        {
+            if (_titlesString != value)
+            {
+                _titlesString = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
 
+
+    public int Id { get => _id; set => _id = value; }
+    public string FirstName { get => _firstName; set => _firstName = value; }
+    public string LastName { get => _lastName; set => _lastName = value; }
+    public DateOnly? BirthDate { get => _birthDate; set => _birthDate = value; }
+
+    public virtual ObservableCollection<BookDisplay> Isbn13s 
+    { 
+        get => _isbn13s;
+        set
+        {
+            _isbn13s = value;
+            RaisePropertyChanged();
+        }
+    }
     public override string ToString()
     {
         return $"{FirstName} {LastName}";
