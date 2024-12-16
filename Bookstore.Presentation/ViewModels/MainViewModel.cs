@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -24,6 +25,17 @@ internal class MainViewModel : ViewModelBase
             else
             {
                 InventoryViewModel!.SelectedStore = InventoryViewModel.Stores.FirstOrDefault();
+            }
+
+            if(value != BookCatalogViewModel && BookCatalogViewModel!.HasUnsavedChanges)
+            {
+                var result = BookCatalogViewModel?.UnsavedChangesMessegeBox();
+           
+                if (result == MessageBoxResult.Yes)
+                {
+                    BookCatalogViewModel!.SaveBooks();
+                }
+        
             }
 
             _selectedViewModel = value;

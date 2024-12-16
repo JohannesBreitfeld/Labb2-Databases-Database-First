@@ -58,20 +58,8 @@ public class BookCatalogViewModel : ViewModelBase
         {
             if(!value == _showEditMode)
             {
-                //if (_hasUnsavedChanges)
-                //{
-                //    var result = UnsavedChangesMessegeBox();
-
-                //    if (result == MessageBoxResult.Yes)
-                //    {
-                //        SaveBooks(null!);
-                //    }
-                //    else if (result == MessageBoxResult.No)
-                //    {
-                //        HasUnsavedChanges = false;
-                //    }
-                //}
-            _showEditMode = value;
+                _showEditMode = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -83,20 +71,8 @@ public class BookCatalogViewModel : ViewModelBase
         {
             if (!value == _showAddMode)
             {
-                //if (_hasUnsavedChanges)
-                //{
-                //    var result = UnsavedChangesMessegeBox();
-
-                //    if (result == MessageBoxResult.Yes)
-                //    {
-                //        SaveBooks(null!);
-                //    }
-                //    else if (result == MessageBoxResult.No)
-                //    {
-                //        HasUnsavedChanges = false;
-                //    }
-                //}
                 _showAddMode = value;
+                RaisePropertyChanged();
             }
         }
     }
@@ -262,8 +238,6 @@ public class BookCatalogViewModel : ViewModelBase
             IsbnMessage = "";
             SelectedBook = Books?.FirstOrDefault();
         }
-        RaisePropertyChanged(nameof(ShowAddMode));
-        RaisePropertyChanged(nameof(ShowEditMode));
     }
 
     private void ChangeToAddMode(object obj)
@@ -275,8 +249,6 @@ public class BookCatalogViewModel : ViewModelBase
             IsbnMessage = "";
             SelectedBook = BookToAdd;
         }
-        RaisePropertyChanged(nameof(ShowAddMode));
-        RaisePropertyChanged(nameof(ShowEditMode));
     }
 
     private void RemoveBookFromCatalog(object obj = null!)
@@ -295,7 +267,11 @@ public class BookCatalogViewModel : ViewModelBase
         {
             SelectedBook.Authors.Remove(SelectedBook.SelectedAuthor);
             SelectedBook.RaisePropertyChanged(nameof(SelectedBook.AuthorsString));
-            HasUnsavedChanges = true;
+            
+            if (SelectedBook != BookToAdd)
+            {
+                HasUnsavedChanges = true;
+            }
         }
     }
 
@@ -306,7 +282,11 @@ public class BookCatalogViewModel : ViewModelBase
             SelectedBook.Authors.Add(AuthorToAdd);
             SelectedBook.RaisePropertyChanged(nameof(SelectedBook.AuthorsString));
             GetAddableAuthors();
-            HasUnsavedChanges = true; 
+
+            if (SelectedBook != BookToAdd)
+            {
+                HasUnsavedChanges = true;
+            }
         }
     }
  
