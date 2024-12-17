@@ -50,6 +50,7 @@
             </StackPanel>
             <Button Height="25" 
                     Content="Delete author" 
+                    Command="{Binding DeleteAuthorCommand}"
                     Margin="0 10 0 20" 
                     Width="245"
                     HorizontalAlignment="Left"/>
@@ -61,38 +62,39 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="First name:" 
             Width="80"/>
-                <TextBox Text="{Binding SelectedAuthor.FirstName}"
+                <TextBox Text="{Binding AuthorToAdd.FirstName}"
               Width="165"
               Padding="4"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
                 <Label Content="Last name:" 
             Width="80"/>
-                <TextBox Text="{Binding SelectedAuthor.LastName, 
+                <TextBox Text="{Binding AuthorToAdd.LastName, 
                  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
               Width="165" Padding="4"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Date of birth:" 
              Width="80"/>
-                <DatePicker SelectedDate="{Binding SelectedAuthor.BirthDate, 
+                <DatePicker SelectedDate="{Binding AuthorToAdd.BirthDate, 
                  Converter={StaticResource DateOnlyToDateTimeConverter},
                  Mode=TwoWay, 
                  UpdateSourceTrigger=PropertyChanged}"
                  Width="165"/>
             </StackPanel>
             <Button Height="25" 
-         Content="Add author" 
-         Margin="0 10 0 20" 
-         Width="245"
-         HorizontalAlignment="Left"/>
-
+                    Content="Add author" 
+                    Command="{Binding AddAuthorCommand}"
+                    Margin="0 10 0 20" 
+                    Width="245"
+                    HorizontalAlignment="Left"/>
+            <Separator/>
             <StackPanel Orientation="Horizontal" 
                     Height="25"
                     Margin="10 30 10 0"
                     HorizontalAlignment="Left">
                 <Button Content="Save changes" 
-                    Command="{Binding SaveInventoryCommand}"
+                    Command="{Binding SaveAuthorsCommand}"
                     Margin="0 0 25 0"
                     Width="100"/>
                 <Button Content="Undo changes"

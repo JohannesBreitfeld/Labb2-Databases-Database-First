@@ -18,12 +18,12 @@ public class InventoryEntityTypeConfiguration : IEntityTypeConfiguration<Invento
 
         builder.HasOne(d => d.Isbn13Navigation).WithMany(p => p.Inventories)
             .HasForeignKey(d => d.Isbn13)
-            .OnDelete(DeleteBehavior.ClientSetNull)
+            .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("FK__Inventori__ISBN1__5CD6CB2B");
 
         builder.HasOne(d => d.Store).WithMany(p => p.Inventories)
             .HasForeignKey(d => d.StoreId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
+            .OnDelete(DeleteBehavior.Cascade)
             .HasConstraintName("FK__Inventori__Store__5DCAEF64");
     }
 }

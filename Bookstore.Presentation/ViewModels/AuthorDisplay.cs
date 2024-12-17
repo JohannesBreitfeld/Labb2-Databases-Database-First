@@ -1,10 +1,4 @@
-﻿using Bookstore.Domain;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -49,11 +43,39 @@ public class AuthorDisplay : ViewModelBase
         }
     }
 
+    public event Action? AuthorPropertiesChanged;
 
     public int Id { get => _id; set => _id = value; }
-    public string FirstName { get => _firstName; set => _firstName = value; }
-    public string LastName { get => _lastName; set => _lastName = value; }
-    public DateOnly? BirthDate { get => _birthDate; set => _birthDate = value; }
+    public string FirstName 
+    { 
+        get => _firstName;
+        set
+        {
+            _firstName = value;
+            RaisePropertyChanged();
+            AuthorPropertiesChanged?.Invoke();
+        }
+    }
+    public string LastName
+    {
+        get => _lastName;
+        set
+        {
+            _lastName = value;
+            RaisePropertyChanged();
+            AuthorPropertiesChanged?.Invoke();
+        }
+    }
+    public DateOnly? BirthDate
+    {
+        get => _birthDate;
+        set
+        {
+            _birthDate = value;
+            RaisePropertyChanged();
+            AuthorPropertiesChanged?.Invoke();
+        }
+    }
 
     public virtual ObservableCollection<BookDisplay> Isbn13s 
     { 

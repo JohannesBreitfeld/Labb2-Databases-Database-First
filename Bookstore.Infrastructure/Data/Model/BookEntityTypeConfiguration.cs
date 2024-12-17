@@ -32,11 +32,11 @@ public class BookEntityTypeConfiguration : IEntityTypeConfiguration<Book>
                 "AuthorsBook",
                 r => r.HasOne<Author>().WithMany()
                     .HasForeignKey("AuthorId")
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__AuthorsBo__Autho__5812160E"),
                 l => l.HasOne<Book>().WithMany()
                     .HasForeignKey("Isbn13")
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__AuthorsBo__ISBN1__571DF1D5"),
                 j =>
                 {

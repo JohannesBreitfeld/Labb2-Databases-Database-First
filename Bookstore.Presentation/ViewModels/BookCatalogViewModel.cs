@@ -343,7 +343,7 @@ public class BookCatalogViewModel : ViewModelBase
         try
         {
             using var context = new BookstoreContext();
-            var booksInDB = context.Books.Include(b => b.Authors).ToList();
+            var booksInDB = context.Books.Include(b => b.Authors).Include(b => b.Inventories).ToList();
 
             if (Books != null)
             {
