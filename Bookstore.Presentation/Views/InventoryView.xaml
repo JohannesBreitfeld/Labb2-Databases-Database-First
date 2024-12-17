@@ -27,13 +27,13 @@
 
         <StackPanel Grid.Column="0">
             <StackPanel Margin="10 10 10 10">
-                <Label Content="Stores" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <Label Content="STORES" FontWeight="Bold" HorizontalAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding Stores}"
                           SelectedItem="{Binding SelectedStore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
     
             <Separator/>
-            <Label Content="Update stock quantity" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Label Content="UPDATE STOCK QUANTITY" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
                 <Label Content="Selected book:" FontWeight="SemiBold"/>
                 <Label Content="{Binding SelectedBook.Title}"
@@ -51,7 +51,7 @@
                         Margin="40 0 0 0"/>
             </StackPanel>
             <Separator Margin="0 10 0 10"/>
-            <Label Content="Add book to store" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Label Content="ADD BOOK TO STORE" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 0">
                 <Label Content="Choose a book to add:"/>
                 <ComboBox ItemsSource="{Binding AddableBooks, Converter={StaticResource EmptyCollectionToMessageConverter}}"

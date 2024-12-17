@@ -17,11 +17,14 @@ public class BookCatalogViewModel : ViewModelBase
     private ObservableCollection<AuthorDisplay>? _addableAuthors;
     private string _selectedBookIsbn = null!;
     private ObservableCollection<BookBinding> bindings = null!;
-
     private bool _hasUnsavedChanges;
     private bool _showEditMode = true;
     private bool _showAddMode = false;
 
+    public BookDisplay BookToAdd { get; set; }
+    public string? StatusMessage { get; set; }
+    public string? AddBookMessage { get; set; }
+    
     public ObservableCollection<BookBinding> Bindings 
     {
         get => bindings;
@@ -31,10 +34,6 @@ public class BookCatalogViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
-    public BookDisplay BookToAdd { get; set; }
-    public string? StatusMessage { get; set; }
-    public string? AddBookMessage { get; set; }
-    
     public override bool HasUnsavedChanges
     {
         get => _hasUnsavedChanges;

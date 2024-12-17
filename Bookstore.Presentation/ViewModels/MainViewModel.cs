@@ -37,6 +37,7 @@ public class MainViewModel : ViewModelBase
                 {
                     BookCatalogViewModel!.SaveBooks();
                 }
+                BookCatalogViewModel.HasUnsavedChanges = false;
             }
             if (value != AuthorViewModel && AuthorViewModel!.HasUnsavedChanges)
             { 
@@ -46,6 +47,7 @@ public class MainViewModel : ViewModelBase
                 {
                     AuthorViewModel!.SaveAuthors();
                 }
+                AuthorViewModel.HasUnsavedChanges = false;
             }
 
             _selectedViewModel = value;

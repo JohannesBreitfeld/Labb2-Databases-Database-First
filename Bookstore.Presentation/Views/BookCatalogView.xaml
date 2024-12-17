@@ -38,26 +38,25 @@
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            
+
             <Button Uid="11"
                     Grid.Column="1" 
-                    VerticalAlignment="Center" 
-                    HorizontalAlignment="Left"
-                    Content="Edit book in catalog" 
+                    Height="20"
+                    Width="150"
+                    Content="EDIT BOOK" 
                     FontSize="12" 
                     FontWeight="Bold"
                     Background="{x:Null}" BorderBrush="{x:Null}"
-                    Margin="15 0 0 0"
                     Click="Button_Click"
                     Command="{Binding EditModeCommand}"/>
 
             <Button Uid="12"
-                    Content="Add new book to catalog" 
+                    Content="ADD BOOK" 
                     FontSize="12" 
                     FontWeight="Bold"
                     Grid.Column="2" 
-                    VerticalAlignment="Center" 
-                    HorizontalAlignment="Center"
+                    Height="20"
+                    Width="150"
                     Background="{x:Null}" BorderBrush="{x:Null}"
                     Click="Button_Click"
                     Command="{Binding AddModeCommand}"/>
