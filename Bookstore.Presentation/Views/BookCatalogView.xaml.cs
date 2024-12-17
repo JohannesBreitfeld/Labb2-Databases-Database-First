@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bookstore.Presentation.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,5 +32,15 @@ namespace Bookstore.Presentation.Views
 
             Grid.SetColumn(GridCursor, index % 10);
         }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+            if (DataContext is BookCatalogViewModel viewModel)
+            {
+                await viewModel.GetBooksAsync();
+            }
+        }
     }
+    
 }

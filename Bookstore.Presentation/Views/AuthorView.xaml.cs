@@ -18,7 +18,7 @@ namespace Bookstore.Presentation.Views
         {
             if (DataContext is AuthorViewModel viewModel)
             {
-                await viewModel.GetAuthors();
+                await viewModel.GetAuthorsAsync();
             }
         }
     }

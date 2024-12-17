@@ -174,7 +174,7 @@ public class BookCatalogViewModel : ViewModelBase
    
     public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
-    public DelegateCommand RemoveAuthorCommand { get; }
+    public DelegateCommand RemoveAuthorCommand { get; } 
     public DelegateCommand RemoveBookCommand { get; }
     public DelegateCommand AddModeCommand { get; }
     public DelegateCommand EditModeCommand { get; }
@@ -183,7 +183,6 @@ public class BookCatalogViewModel : ViewModelBase
 
     public BookCatalogViewModel()
     {
-        GetBooks();
         BookToAdd = new BookDisplay();
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
@@ -286,61 +285,66 @@ public class BookCatalogViewModel : ViewModelBase
             }
         }
     }
- 
-    private void GetLanguages()
+
+    private async Task GetLanguagesAsync()
     {
         using (var context = new BookstoreContext())
         {
-            Languages = new ObservableCollection<Language>(context.Languages.Distinct().ToList());
-        }
-    }
-   
-    private void GetBindings()
-    {
-        using (var context = new BookstoreContext())
-        {
-            Bindings = new ObservableCollection<BookBinding>(context.BookBindings.Distinct().ToList());
+            Languages = new ObservableCollection<Language>(await context.Languages.Distinct().ToListAsync());
         }
     }
 
-	private void GetBooks(object obj = null!)
+    private async Task GetBindingsAsync()
+    {
+        using (var context = new BookstoreContext())
+        {
+            Bindings = new ObservableCollection<BookBinding>(await context.BookBindings.Distinct().ToListAsync());
+        }
+    }
+
+    private async void GetBooks(object obj = null!)
+    {
+        await GetBooksAsync();
+    }
+
+    public async Task GetBooksAsync()
 	{
-        GetLanguages();
-        GetBindings();
+        await GetLanguagesAsync();
+        await GetBindingsAsync();
         using var context = new BookstoreContext();
 
         var books = new ObservableCollection<BookDisplay>
-            (
-                context.Books
-                .Select(b => new BookDisplay()
-                        {
-                            Isbn13 = b.Isbn13,
-                            Title = b.Title,
-                            Language = b.Language,
-                            Binding = b.Binding,
-                            Price = b.Price,
-                            DatePublished = b.DatePublished,
-                            Authors = new ObservableCollection<AuthorDisplay>(b.Authors
-                                .Select(a => new AuthorDisplay()
-                                {
-                                    Id = a.Id,
-                                    BirthDate = a.BirthDate,
-                                    FirstName = a.FirstName,
-                                    LastName = a.LastName
-                                }))
-                        }
-                )
-            );
+        (
+           await context.Books
+               .Select(b => new BookDisplay()
+               {
+                   Isbn13 = b.Isbn13,
+                   Title = b.Title,
+                   Language = b.Language,
+                   Binding = b.Binding,
+                   Price = b.Price,
+                   DatePublished = b.DatePublished,
+                   Authors = new ObservableCollection<AuthorDisplay>(b.Authors
+                       .Select(a => new AuthorDisplay()
+                       {
+                           Id = a.Id,
+                           BirthDate = a.BirthDate,
+                           FirstName = a.FirstName,
+                           LastName = a.LastName
+                       }))
+               })
+               .ToListAsync()  
+       );
         HasUnsavedChanges = false;
         Books = books;
     }
     
-    public void SaveBooks(object obj = null!)
+    public async void SaveBooks(object obj = null!)
     {
         try
         {
             using var context = new BookstoreContext();
-            var booksInDB = context.Books.Include(b => b.Authors).Include(b => b.Inventories).ToList();
+            var booksInDB = await context.Books.Include(b => b.Authors).Include(b => b.Inventories).ToListAsync();
 
             if (Books != null)
             {
@@ -359,7 +363,7 @@ public class BookCatalogViewModel : ViewModelBase
 
                         foreach (var author in book.Authors)
                         {
-                            var retrievedAuthor = context.Authors.Find(author.Id);
+                            var retrievedAuthor = await context.Authors.FindAsync(author.Id);
                             if (retrievedAuthor != null)
                             {
                                 bookFromDB.Authors.Add(retrievedAuthor);
@@ -379,13 +383,13 @@ public class BookCatalogViewModel : ViewModelBase
                         };
                         foreach (var author in book.Authors)
                         {
-                            var retrievedAuthor = context.Authors.Find(author.Id);
+                            var retrievedAuthor = await context.Authors.FindAsync(author.Id);
                             if (retrievedAuthor != null)
                             {
                                 newBook.Authors.Add(retrievedAuthor);
                             }
                         }
-                        context.Books.Add(newBook);
+                        await context.Books.AddAsync(newBook);
                     }
                 }
             }
@@ -398,7 +402,7 @@ public class BookCatalogViewModel : ViewModelBase
                 }
             }
             HasUnsavedChanges = false;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             
         }
         catch (Exception ex)

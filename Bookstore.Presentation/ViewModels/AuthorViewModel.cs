@@ -29,6 +29,7 @@ public class AuthorViewModel : ViewModelBase
             }
             RaisePropertyChanged();
             SaveAuthorsCommand.RaiseCanExecuteChanged();
+            UndoChangesCommand.RaiseCanExecuteChanged();
         }
     }
     public string StatusMessage
@@ -72,6 +73,7 @@ public class AuthorViewModel : ViewModelBase
     public DelegateCommand SaveAuthorsCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand DeleteAuthorCommand { get; }
+    public DelegateCommand UndoChangesCommand { get; }
 
     public AuthorDisplay AuthorToAdd 
     { 
@@ -89,6 +91,12 @@ public class AuthorViewModel : ViewModelBase
         AddAuthorCommand = new DelegateCommand(AddAuthor);
         SaveAuthorsCommand = new DelegateCommand(SaveAuthors, (object? _) => HasUnsavedChanges == true);
         DeleteAuthorCommand = new DelegateCommand(RemoveAuthor, (object? _) => SelectedAuthor != null);
+        UndoChangesCommand = new DelegateCommand(UndoChanges, (object? _) => HasUnsavedChanges == true);
+    }
+
+    private async void UndoChanges(object obj)
+    {
+        await GetAuthorsAsync();
     }
 
     private void RemoveAuthor(object obj)
@@ -111,7 +119,7 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    public async Task GetAuthors(object obj = null!)
+    public async Task GetAuthorsAsync(object obj = null!)
     {
         try
         {
@@ -142,12 +150,12 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    public void SaveAuthors(object obj = null!)
+    public async void SaveAuthors(object obj = null!)
     {
         try
         {
             using var context = new BookstoreContext();
-            var authors = context.Authors.Distinct().ToList();
+            var authors = await context.Authors.Distinct().ToListAsync();
             
             if (Authors != null)
             {
@@ -182,7 +190,7 @@ public class AuthorViewModel : ViewModelBase
                 }
             }
             HasUnsavedChanges = false;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
