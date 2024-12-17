@@ -19,7 +19,8 @@ public class MainViewModel : ViewModelBase
         get => _selectedViewModel;
         set
         {
-            if(value != InventoryViewModel)
+            
+            if (value != InventoryViewModel)
             {
                 InventoryViewModel!.SelectedStore = null;
             }
@@ -30,11 +31,20 @@ public class MainViewModel : ViewModelBase
 
             if(value != BookCatalogViewModel && BookCatalogViewModel!.HasUnsavedChanges)
             {
-                var result = BookCatalogViewModel?.UnsavedChangesMessegeBox();
+                var result = UnsavedChangesMessegeBox();
            
                 if (result == MessageBoxResult.Yes)
                 {
                     BookCatalogViewModel!.SaveBooks();
+                }
+            }
+            if (value != AuthorViewModel && AuthorViewModel!.HasUnsavedChanges)
+            { 
+                var result = UnsavedChangesMessegeBox();
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    AuthorViewModel!.SaveAuthors();
                 }
             }
 
@@ -43,15 +53,19 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public MainViewModel(InventoryViewModel inventoryViewModel, BookCatalogViewModel bookCatalogViewModel, AuthorViewModel authorViewModel)
+    public MainViewModel(InventoryViewModel inventoryViewModel, BookCatalogViewModel bookCatalogViewModel, AuthorViewModel authorViewModel, Func<MessageBoxResult> unsavedChangesMessegeBox)
     {
         InventoryViewModel = inventoryViewModel;
         BookCatalogViewModel = bookCatalogViewModel;
         AuthorViewModel = authorViewModel;
         _selectedViewModel = InventoryViewModel;
 
+        UnsavedChangesMessegeBox = unsavedChangesMessegeBox;
+
         SelectViewModelCommand = new DelegateCommand(SetViewModel);
     }
+
+    public Func<MessageBoxResult> UnsavedChangesMessegeBox;
 
     private void SetViewModel(object obj)
     {

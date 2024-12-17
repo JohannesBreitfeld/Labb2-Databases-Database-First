@@ -172,8 +172,6 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
    
-    public Func<MessageBoxResult> UnsavedChangesMessegeBox;
-  
     public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand RemoveAuthorCommand { get; }
@@ -183,11 +181,10 @@ public class BookCatalogViewModel : ViewModelBase
     public DelegateCommand UndoChangesCommand { get; }
     public DelegateCommand AddBookToCatalogCommand { get; }
 
-    public BookCatalogViewModel(Func<MessageBoxResult> unsavedChangesPrompt)
+    public BookCatalogViewModel()
     {
         GetBooks();
         BookToAdd = new BookDisplay();
-        UnsavedChangesMessegeBox = unsavedChangesPrompt;
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
         SaveCommand = new DelegateCommand(SaveBooks, (object? _) => HasUnsavedChanges == true);

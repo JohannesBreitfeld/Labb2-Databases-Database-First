@@ -89,7 +89,6 @@ public class AuthorViewModel : ViewModelBase
         AddAuthorCommand = new DelegateCommand(AddAuthor);
         SaveAuthorsCommand = new DelegateCommand(SaveAuthors, (object? _) => HasUnsavedChanges == true);
         DeleteAuthorCommand = new DelegateCommand(RemoveAuthor, (object? _) => SelectedAuthor != null);
-        GetAuthors();
     }
 
     private void RemoveAuthor(object obj)
@@ -112,12 +111,12 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    private void GetAuthors(object obj = null!)
+    public async Task GetAuthors(object obj = null!)
     {
         try
         {
             using var context = new BookstoreContext();
-            var authors = context.Authors.Include(a => a.Isbn13s).Distinct().ToList();
+            var authors =  await context.Authors.Include(a => a.Isbn13s).Distinct().ToListAsync();
 
             Authors = new ObservableCollection<AuthorDisplay>(
                     authors.Select(a => new AuthorDisplay
@@ -143,7 +142,7 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    private void SaveAuthors(object obj = null!)
+    public void SaveAuthors(object obj = null!)
     {
         try
         {

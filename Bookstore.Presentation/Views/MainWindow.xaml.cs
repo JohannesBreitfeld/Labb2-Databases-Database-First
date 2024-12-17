@@ -1,14 +1,5 @@
 ﻿using Bookstore.Presentation.ViewModels;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Bookstore.Presentation
 {
@@ -26,13 +17,12 @@ namespace Bookstore.Presentation
             InitializeComponent();
             
             this.InventoryViewModel = new InventoryViewModel(UnsavedChanges);
-            this.BookCatalogViewModel = new BookCatalogViewModel(UnsavedChanges);
+            this.BookCatalogViewModel = new BookCatalogViewModel();
             this.AuthorViewModel = new AuthorViewModel();
 
-            DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel, AuthorViewModel);
+            DataContext = new MainViewModel(InventoryViewModel, BookCatalogViewModel, AuthorViewModel, UnsavedChanges);
         }
        
-        
         public MessageBoxResult UnsavedChanges()
         {
             var result = MessageBox.Show("You have unsaved changes that will be lost. Would you like to save before continuing?", "Warning", MessageBoxButton.YesNo);
