@@ -12,11 +12,11 @@ public class BookCatalogViewModel : ViewModelBase
 	private ObservableCollection<BookDisplay>? _books;
     private BookDisplay? _selectedBook;
     private AuthorDisplay? _authorToAdd;
-    private ObservableCollection<Language?>? _languages;
+    private ObservableCollection<Language>? _languages;
     private string _isbnMessege = string.Empty;
     private ObservableCollection<AuthorDisplay>? _addableAuthors;
     private string _selectedBookIsbn = null!;
-    private bool _isLoading = false;
+
     private bool _hasUnsavedChanges;
     private bool _showEditMode = true;
     private bool _showAddMode = false;
@@ -26,7 +26,7 @@ public class BookCatalogViewModel : ViewModelBase
     public string? StatusMessage { get; set; }
     public string? AddBookMessage { get; set; }
     
-    public bool HasUnsavedChanges
+    public override bool HasUnsavedChanges
     {
         get => _hasUnsavedChanges;
         set
@@ -107,7 +107,7 @@ public class BookCatalogViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
-    public ObservableCollection<Language?>? Languages 
+    public ObservableCollection<Language>? Languages 
     {
         get => _languages;
         set
@@ -413,7 +413,7 @@ public class BookCatalogViewModel : ViewModelBase
     private async void GetAddableAuthors()
     {
         try
-        {
+        { 
             using var context = new BookstoreContext();
 
             if (SelectedBook != null)
@@ -441,14 +441,6 @@ public class BookCatalogViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = $"Could not connect to database : {ex.Message}";
-        }
-    }
-
-    private void OnPropertyChanged()
-    {
-        if (!_isLoading)
-        {
-            HasUnsavedChanges = true;
         }
     }
 

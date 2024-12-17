@@ -8,7 +8,6 @@ namespace Bookstore.Presentation.ViewModels;
 
 public class InventoryViewModel : ViewModelBase
 {
-    private bool _isLoading = true;
     private Store? _selectedStore;
     private ObservableCollection<InventoryDisplay>? _inventories;
     private InventoryDisplay _selectedBook = null!;
@@ -30,7 +29,7 @@ public class InventoryViewModel : ViewModelBase
         
     }
 
-    public string? Statusmessege { get; set; } 
+    public string? StatusMessage { get; set; } 
     public ObservableCollection<Store> Stores { get; set; }
 
     public InventoryDisplay SelectedBookToAdd
@@ -64,7 +63,7 @@ public class InventoryViewModel : ViewModelBase
                 _isLoading = true;
                 foreach (var inventoryDisplay in _inventories)
                 {
-                    inventoryDisplay.QuantityChanged += OnQuantityChanged;
+                    inventoryDisplay.QuantityChanged += OnPropertyChanged;
                 }
                 _isLoading = false;
             }
@@ -107,7 +106,7 @@ public class InventoryViewModel : ViewModelBase
             }
         }
     }
-    public bool HasUnsavedChanges
+    public override bool HasUnsavedChanges
     {
         get => _hasUnsavedChanges;
         set
@@ -118,14 +117,14 @@ public class InventoryViewModel : ViewModelBase
                 
                 if (value == true)
                 {
-                    Statusmessege = "You have unsaved changes";
+                    StatusMessage = "You have unsaved changes";
                 }
                 else
                 {
-                    Statusmessege = "";
+                    StatusMessage = "";
                 }
 
-                RaisePropertyChanged(nameof(Statusmessege));
+                RaisePropertyChanged(nameof(StatusMessage));
                 RaisePropertyChanged();
                 SaveInventoryCommand.RaiseCanExecuteChanged();
                 UndoChangesCommand.RaiseCanExecuteChanged();
@@ -139,17 +138,9 @@ public class InventoryViewModel : ViewModelBase
     public DelegateCommand AddBookCommand { get; }
     public DelegateCommand UndoChangesCommand { get; }
 
-    private void OnQuantityChanged()
-    {
-        if (!_isLoading)
-        {
-            HasUnsavedChanges = true;
-        }
-    }
-
     private void RemoveBook(object obj)
     {
-        SelectedBook.QuantityChanged -= OnQuantityChanged;
+        SelectedBook.QuantityChanged -= OnPropertyChanged;
         AddableBooks?.Add(SelectedBook);
         Inventories?.Remove(SelectedBook);
         HasUnsavedChanges = true;
@@ -174,7 +165,7 @@ public class InventoryViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Statusmessege = $"Connecting to database failed : {ex.Message}";
+            StatusMessage = $"Connecting to database failed : {ex.Message}";
             return null;
         }
     }
@@ -206,7 +197,7 @@ public class InventoryViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Statusmessege = $"Connecting to database failed : {ex.Message}";
+            StatusMessage = $"Connecting to database failed : {ex.Message}";
         }
     }
 
@@ -257,7 +248,7 @@ public class InventoryViewModel : ViewModelBase
         }
         catch(Exception ex)
         {
-            Statusmessege = $"Connecting to database failed : {ex.Message}";
+            StatusMessage = $"Connecting to database failed : {ex.Message}";
         }
     }
 
@@ -303,7 +294,7 @@ public class InventoryViewModel : ViewModelBase
         }
         catch(Exception ex)
         {
-            Statusmessege = $"Connecting to database failed : {ex.Message}";
+            StatusMessage = $"Connecting to database failed : {ex.Message}";
         }
     }
 }

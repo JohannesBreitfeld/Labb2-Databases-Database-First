@@ -86,7 +86,7 @@
                         Command="{Binding UndoChangesCommand}"
                         Width="100"/>
             </StackPanel>
-            <TextBlock Text="{Binding Statusmessege}" 
+            <TextBlock Text="{Binding StatusMessage}" 
                        HorizontalAlignment="Center" 
                        Margin="5"/>
         </StackPanel>

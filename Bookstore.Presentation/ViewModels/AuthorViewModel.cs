@@ -10,13 +10,26 @@ public class AuthorViewModel : ViewModelBase
     private ObservableCollection<AuthorDisplay>? _authors;
     private AuthorDisplay? _selectedAuthor;
     private AuthorDisplay _authorToAdd = null!;
-    private string _statusMessage;
-    private bool _hasUnsavedChanges;
+    private string _statusMessage = null!;
+    private bool _hasUnsavedChanges = false;
 
-    public bool HasUnsavedChanges
+    public override bool HasUnsavedChanges
     {
-        get { return _hasUnsavedChanges; }
-        set { _hasUnsavedChanges = value; }
+        get => _hasUnsavedChanges; 
+        set 
+        { 
+            _hasUnsavedChanges = value;
+            if (value == true)
+            {
+                StatusMessage = "You have unsaved changes";
+            }
+            else
+            {
+                StatusMessage = "";
+            }
+            RaisePropertyChanged();
+            SaveAuthorsCommand.RaiseCanExecuteChanged();
+        }
     }
     public string StatusMessage
     {
@@ -43,6 +56,15 @@ public class AuthorViewModel : ViewModelBase
         set
         {
             _authors = value;
+            if (_authors != null)
+            {
+                _isLoading = true;
+                foreach (var author in _authors)
+                {
+                    author.AuthorPropertiesChanged += OnPropertyChanged;
+                }
+                _isLoading = false;
+            }
             RaisePropertyChanged();
         }
     }
@@ -63,11 +85,21 @@ public class AuthorViewModel : ViewModelBase
 
     public AuthorViewModel()
     {
-        GetAuthors();
         AuthorToAdd = new AuthorDisplay();
         AddAuthorCommand = new DelegateCommand(AddAuthor);
-        SaveAuthorsCommand = new DelegateCommand(SaveAuthors);
-        DeleteAuthorCommand = new DelegateCommand((object _) => Authors?.Remove(SelectedAuthor!), (object? _) => SelectedAuthor != null);
+        SaveAuthorsCommand = new DelegateCommand(SaveAuthors, (object? _) => HasUnsavedChanges == true);
+        DeleteAuthorCommand = new DelegateCommand(RemoveAuthor, (object? _) => SelectedAuthor != null);
+        GetAuthors();
+    }
+
+    private void RemoveAuthor(object obj)
+    {
+        if (SelectedAuthor != null)
+        {
+            SelectedAuthor.AuthorPropertiesChanged -= OnPropertyChanged;
+            Authors?.Remove(SelectedAuthor!);
+            HasUnsavedChanges = true;
+        }
     }
 
     private void AddAuthor(object obj)
@@ -76,10 +108,9 @@ public class AuthorViewModel : ViewModelBase
         {
             Authors?.Add(AuthorToAdd);
             AuthorToAdd = new AuthorDisplay();
+            HasUnsavedChanges = true;
         }
     }
-
-
 
     private void GetAuthors(object obj = null!)
     {
@@ -111,6 +142,7 @@ public class AuthorViewModel : ViewModelBase
             StatusMessage = $"Connecting to database failed : {ex.Message}";
         }
     }
+
     private void SaveAuthors(object obj = null!)
     {
         try
