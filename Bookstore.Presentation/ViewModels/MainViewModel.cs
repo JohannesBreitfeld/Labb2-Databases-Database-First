@@ -20,42 +20,18 @@ public class MainViewModel : ViewModelBase
         set
         {
             
-            if (value != InventoryViewModel)
-            {
-                InventoryViewModel!.SelectedStore = null;
-            }
-            else
-            {
-                InventoryViewModel!.SelectedStore = InventoryViewModel.Stores.FirstOrDefault();
-            }
-
-            if(value != BookCatalogViewModel && BookCatalogViewModel!.HasUnsavedChanges)
-            {
-                var result = UnsavedChangesMessegeBox();
-           
-                if (result == MessageBoxResult.Yes)
-                {
-                    BookCatalogViewModel!.SaveBooksAsync();
-                }
-                BookCatalogViewModel.HasUnsavedChanges = false;
-            }
-            if (value != AuthorViewModel && AuthorViewModel!.HasUnsavedChanges)
-            { 
-                var result = UnsavedChangesMessegeBox();
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    AuthorViewModel!.SaveAuthors();
-                }
-                AuthorViewModel.HasUnsavedChanges = false;
-            }
+            
 
             _selectedViewModel = value;
             RaisePropertyChanged();
         }
     }
+    
+    public DelegateCommandAsync SelectViewModelCommand { get; }
+    public Func<MessageBoxResult> UnsavedChangesMessegeBox;
 
-    public MainViewModel(InventoryViewModel inventoryViewModel, BookCatalogViewModel bookCatalogViewModel, AuthorViewModel authorViewModel, Func<MessageBoxResult> unsavedChangesMessegeBox)
+    public MainViewModel(InventoryViewModel inventoryViewModel, 
+        BookCatalogViewModel bookCatalogViewModel, AuthorViewModel authorViewModel, Func<MessageBoxResult> unsavedChangesMessegeBox)
     {
         InventoryViewModel = inventoryViewModel;
         BookCatalogViewModel = bookCatalogViewModel;
@@ -64,21 +40,43 @@ public class MainViewModel : ViewModelBase
 
         UnsavedChangesMessegeBox = unsavedChangesMessegeBox;
 
-        SelectViewModelCommand = new DelegateCommand(SetViewModel);
+        SelectViewModelCommand = new DelegateCommandAsync(SetViewModel);
     }
 
-    public Func<MessageBoxResult> UnsavedChangesMessegeBox;
-
-    private void SetViewModel(object obj)
+    private async Task SetViewModel(object obj)
     {
         if (obj is ViewModelBase viewModel)
         {
+            if (viewModel != InventoryViewModel)
+            {
+                InventoryViewModel!.SelectedStore = null;
+            }
+            else
+            {
+                InventoryViewModel!.SelectedStore = InventoryViewModel.Stores.FirstOrDefault();
+            }
+
+            if (viewModel != BookCatalogViewModel && BookCatalogViewModel!.HasUnsavedChanges)
+            {
+                var result = UnsavedChangesMessegeBox();
+
+                if (result == MessageBoxResult.Yes)
+                {
+                   await BookCatalogViewModel!.SaveBooksAsync();
+                }
+                BookCatalogViewModel.HasUnsavedChanges = false;
+            }
+            if (viewModel != AuthorViewModel && AuthorViewModel!.HasUnsavedChanges)
+            {
+                var result = UnsavedChangesMessegeBox();
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    await AuthorViewModel!.SaveAuthorsAsync();
+                }
+                AuthorViewModel.HasUnsavedChanges = false;
+            }
             SelectedViewModel = viewModel;
         }
     }
-
-    public DelegateCommand SelectViewModelCommand { get; }
-
-
-
 }

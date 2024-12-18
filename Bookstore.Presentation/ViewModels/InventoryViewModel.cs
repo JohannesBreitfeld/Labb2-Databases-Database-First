@@ -15,20 +15,6 @@ public class InventoryViewModel : ViewModelBase
     private InventoryDisplay _selectedBookToAdd = null!;
     private bool _hasUnsavedChanges;
    
-    public InventoryViewModel(Func<MessageBoxResult> unsavedChangesMessegeBox)
-    {
-        UnsavedChangesMessegeBox = unsavedChangesMessegeBox;
-        RemoveBookCommand = new DelegateCommand(RemoveBook, (object? _) => _selectedBook != null);
-        SaveInventoryCommand = new DelegateCommand(SaveInventoryChangesToDB, (object? _) => HasUnsavedChanges);
-        AddBookCommand = new DelegateCommand(AddBook, (object? _) => SelectedBookToAdd != null);
-        UndoChangesCommand = new DelegateCommand((object _) => LoadInventories(), (object? _) => HasUnsavedChanges);
-        
-        Stores = new ObservableCollection<Store>(GetStores()!);
-        SelectedStore = Stores.FirstOrDefault();
-        LoadInventories();
-        
-    }
-
     public string? StatusMessage { get; set; } 
     public ObservableCollection<Store> Stores { get; set; }
 
@@ -92,7 +78,7 @@ public class InventoryViewModel : ViewModelBase
                     
                     if (result == MessageBoxResult.Yes)
                     {
-                        SaveInventoryChangesToDB(null!);
+                        SaveInventory(null!);
                     }
                     else if (result == MessageBoxResult.No)
                     {
@@ -133,16 +119,31 @@ public class InventoryViewModel : ViewModelBase
     }
 
     public Func<MessageBoxResult> UnsavedChangesMessegeBox;
+    
     public DelegateCommand SaveInventoryCommand { get; }
     public DelegateCommand RemoveBookCommand { get; }
     public DelegateCommand AddBookCommand { get; }
     public DelegateCommand UndoChangesCommand { get; }
+    
+    public InventoryViewModel(Func<MessageBoxResult> unsavedChangesMessegeBox)
+    {
+        UnsavedChangesMessegeBox = unsavedChangesMessegeBox;
+        RemoveBookCommand = new DelegateCommand(RemoveBook, (object? _) => _selectedBook != null);
+        SaveInventoryCommand = new DelegateCommand(SaveInventory, (object? _) => HasUnsavedChanges);
+        AddBookCommand = new DelegateCommand(AddBook, (object? _) => SelectedBookToAdd != null);
+        UndoChangesCommand = new DelegateCommand((object _) => LoadInventories(), (object? _) => HasUnsavedChanges);
+        
+        Stores = new ObservableCollection<Store>(GetStores()!);
+        SelectedStore = Stores.FirstOrDefault();
+        LoadInventories();
+    }
 
     private void RemoveBook(object obj)
     {
         SelectedBook.QuantityChanged -= OnPropertyChanged;
         AddableBooks?.Add(SelectedBook);
         Inventories?.Remove(SelectedBook);
+        SelectedBook = null!;
         HasUnsavedChanges = true;
     }
 
@@ -201,21 +202,19 @@ public class InventoryViewModel : ViewModelBase
         }
     }
 
-    public void SaveInventoryChangesToDB(object obj)
+    public void SaveInventory(object obj)
     {
         try
         {
             using var context = new BookstoreContext();
 
-            var inventoryDisplays = Inventories;
-
-            if (SelectedStore != null && inventoryDisplays != null)
+            if (SelectedStore != null && Inventories != null)
             {
                 var inventories = context.Inventories
                     .Where(i => i.StoreId == SelectedStore.Id)
                     .ToList();
 
-                foreach (var inventoryDisplay in inventoryDisplays)
+                foreach (var inventoryDisplay in Inventories)
                 {
                     var inventory = inventories.FirstOrDefault(i => i.Isbn13 == inventoryDisplay.ISBN13);
 
@@ -235,7 +234,7 @@ public class InventoryViewModel : ViewModelBase
                 }
                 foreach (var inventory in inventories)
                 {
-                    var book = inventoryDisplays.FirstOrDefault(i => i.ISBN13 == inventory.Isbn13);
+                    var book = Inventories.FirstOrDefault(i => i.ISBN13 == inventory.Isbn13);
                     if (book == null)
                     {
                         context.Inventories.Remove(inventory);

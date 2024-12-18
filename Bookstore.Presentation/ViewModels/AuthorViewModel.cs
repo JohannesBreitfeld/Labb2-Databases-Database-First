@@ -70,10 +70,11 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    public DelegateCommand SaveAuthorsCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand DeleteAuthorCommand { get; }
-    public DelegateCommand UndoChangesCommand { get; }
+    
+    public DelegateCommandAsync SaveAuthorsCommand { get; }
+    public DelegateCommandAsync UndoChangesCommand { get; }
 
     public AuthorDisplay AuthorToAdd 
     { 
@@ -88,15 +89,12 @@ public class AuthorViewModel : ViewModelBase
     public AuthorViewModel()
     {
         AuthorToAdd = new AuthorDisplay();
+        
         AddAuthorCommand = new DelegateCommand(AddAuthor);
-        SaveAuthorsCommand = new DelegateCommand(SaveAuthors, (object? _) => HasUnsavedChanges == true);
         DeleteAuthorCommand = new DelegateCommand(RemoveAuthor, (object? _) => SelectedAuthor != null);
-        UndoChangesCommand = new DelegateCommand(UndoChanges, (object? _) => HasUnsavedChanges == true);
-    }
-
-    private async void UndoChanges(object obj)
-    {
-        await GetAuthorsAsync();
+        
+        SaveAuthorsCommand = new DelegateCommandAsync(SaveAuthorsAsync, (object? _) => HasUnsavedChanges == true);
+        UndoChangesCommand = new DelegateCommandAsync(GetAuthorsAsync, (object? _) => HasUnsavedChanges == true);
     }
 
     private void RemoveAuthor(object obj)
@@ -150,7 +148,7 @@ public class AuthorViewModel : ViewModelBase
         }
     }
 
-    public async void SaveAuthors(object obj = null!)
+    public async Task SaveAuthorsAsync(object obj = null!)
     {
         try
         {
