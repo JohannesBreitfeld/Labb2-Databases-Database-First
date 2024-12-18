@@ -35,7 +35,7 @@ public class MainViewModel : ViewModelBase
            
                 if (result == MessageBoxResult.Yes)
                 {
-                    BookCatalogViewModel!.SaveBooks();
+                    BookCatalogViewModel!.SaveBooksAsync();
                 }
                 BookCatalogViewModel.HasUnsavedChanges = false;
             }

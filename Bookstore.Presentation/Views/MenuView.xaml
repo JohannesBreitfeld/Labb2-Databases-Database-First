@@ -9,7 +9,7 @@
               d:DataContext="{d:DesignInstance Type=UI:MainViewModel,
                 IsDesignTimeCreatable=True}"
              d:DesignHeight="45" d:DesignWidth="800">
-        
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -29,9 +29,35 @@
                     FontWeight="Bold"
                     Command="{Binding SelectViewModelCommand}" 
                     CommandParameter="{Binding InventoryViewModel}"
-                    Click="Button_Click"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"/>
+                    Click="Button_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="{x:Null}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="LightGray"/>
+                                        <Setter TargetName="border" Property="Background" Value="LightGray"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
         <Button Uid="1"
                     Grid.Column="1" 
                     Content="CATALOG MANAGEMENT"
@@ -41,18 +67,70 @@
                     CommandParameter="{Binding BookCatalogViewModel}"
                     Click="Button_Click"
                     Background="{x:Null}"
-                    BorderBrush="{x:Null}"/>
-           
-            <Button Uid="2"  
+                    BorderBrush="{x:Null}">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="{x:Null}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="LightGray"/>
+                                        <Setter TargetName="border" Property="Background" Value="LightGray"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Button Uid="2"  
                     Grid.Column="2" 
                     Content="AUTHOR MANAGEMENT"
                     FontSize="15"
                     FontWeight="Bold"
                     Command="{Binding SelectViewModelCommand}" 
                     CommandParameter="{Binding AuthorViewModel}"
-                    Click="Button_Click"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"/>
+                    Click="Button_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="{x:Null}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="LightGray"/>
+                                        <Setter TargetName="border" Property="Background" Value="LightGray"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
 
         <Grid Grid.Row="1" Grid.Column="0" x:Name="GridCursor" Background="DimGray" />
 

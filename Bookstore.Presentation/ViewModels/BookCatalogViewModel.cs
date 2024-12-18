@@ -3,7 +3,6 @@ using Bookstore.Infrastructure.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace Bookstore.Presentation.ViewModels;
 
@@ -127,7 +126,7 @@ public class BookCatalogViewModel : ViewModelBase
     public BookDisplay? SelectedBook
     {
         get => _selectedBook; 
-        set
+        set 
         {
             _selectedBook = value;
 
@@ -180,25 +179,26 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
    
-    public DelegateCommand SaveCommand { get; }
     public DelegateCommand AddAuthorCommand { get; }
     public DelegateCommand RemoveAuthorCommand { get; } 
     public DelegateCommand RemoveBookCommand { get; }
     public DelegateCommand AddModeCommand { get; }
     public DelegateCommand EditModeCommand { get; }
-    public DelegateCommand UndoChangesCommand { get; }
     public DelegateCommand AddBookToCatalogCommand { get; }
+    
+    public DelegateCommandAsync SaveCommand { get; }
+    public DelegateCommandAsync UndoChangesCommand { get; }
 
     public BookCatalogViewModel()
     {
         BookToAdd = new BookDisplay();
         RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
-        SaveCommand = new DelegateCommand(SaveBooks, (object? _) => HasUnsavedChanges == true);
+        SaveCommand = new DelegateCommandAsync(SaveBooksAsync, (object? _) => HasUnsavedChanges == true);
         RemoveBookCommand = new DelegateCommand(RemoveBookFromCatalog, (object? _) => SelectedBook != null);
         AddModeCommand = new DelegateCommand(ChangeToAddMode);
         EditModeCommand = new DelegateCommand(ChangeToEditMode);
-        UndoChangesCommand = new DelegateCommand(GetBooks, (object? _) => HasUnsavedChanges == true);
+        UndoChangesCommand = new DelegateCommandAsync(GetBooksAsync, (object? _) => HasUnsavedChanges == true);
         AddBookToCatalogCommand = new DelegateCommand(AddBookToCatalog);
     }
 
@@ -310,12 +310,7 @@ public class BookCatalogViewModel : ViewModelBase
         }
     }
 
-    private async void GetBooks(object obj = null!)
-    {
-        await GetBooksAsync();
-    }
-
-    public async Task GetBooksAsync()
+    public async Task GetBooksAsync(object obj = null!)
 	{
         await GetLanguagesAsync();
         await GetBindingsAsync();
@@ -347,7 +342,7 @@ public class BookCatalogViewModel : ViewModelBase
         Books = books;
     }
     
-    public async void SaveBooks(object obj = null!)
+    public async Task SaveBooksAsync(object obj = null!)
     {
         try
         {

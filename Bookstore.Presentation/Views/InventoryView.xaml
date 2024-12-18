@@ -35,7 +35,7 @@
             <Separator/>
             <Label Content="UPDATE STOCK QUANTITY" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Margin="10 0 10 10" Orientation="Horizontal">
-                <Label Content="Selected book:" FontWeight="SemiBold"/>
+                <Label Content="Selected book:" FontWeight="Bold"/>
                 <Label Content="{Binding SelectedBook.Title}"
                        Height="30"/>
             </StackPanel>
