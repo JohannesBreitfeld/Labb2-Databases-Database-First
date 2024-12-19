@@ -5,7 +5,6 @@ namespace Bookstore.Presentation.ViewModels;
 
 public class BookDisplay : ViewModelBase
 {
-    private AuthorDisplay? _selectedAuthor;
     private string? _authorsString;
     private string _isbn13 = string.Empty;
     private string _title = null!;
@@ -133,17 +132,8 @@ public class BookDisplay : ViewModelBase
                 _authors = value;
                 RaisePropertyChanged();
                 IsChanged?.Invoke();
-                SelectedAuthor = Authors.FirstOrDefault();
             }
         }
     } 
-    public AuthorDisplay? SelectedAuthor
-    {
-        get => _selectedAuthor;
-        set
-        {
-            _selectedAuthor = value;
-            RaisePropertyChanged();
-        }
-    }
+    
 }

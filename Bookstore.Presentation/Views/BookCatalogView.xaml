@@ -152,7 +152,7 @@
                        Width="75"/>
                     <ComboBox ItemsSource="{Binding SelectedBook.Authors}" 
                           Padding="4"
-                          SelectedItem="{Binding SelectedBook.SelectedAuthor, Mode=TwoWay}"
+                          SelectedItem="{Binding SelectedAuthor, Mode=TwoWay}"
                           Width="240"/>
                     <Button Content="{fa:Icon Minus}"
                         Command="{Binding RemoveAuthorCommand}"

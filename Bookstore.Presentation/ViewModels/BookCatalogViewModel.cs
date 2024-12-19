@@ -10,6 +10,7 @@ public class BookCatalogViewModel : ViewModelBase
 {
 	private ObservableCollection<BookDisplay>? _books;
     private BookDisplay? _selectedBook;
+    private AuthorDisplay? _selectedAuthor;
     private AuthorDisplay? _authorToAdd;
     private ObservableCollection<Language>? _languages;
     private string _isbnMessege = string.Empty;
@@ -131,6 +132,7 @@ public class BookCatalogViewModel : ViewModelBase
             _selectedBook = value;
 
             RaisePropertyChanged();
+            SelectedAuthor = _selectedBook?.Authors.FirstOrDefault();
             RemoveAuthorCommand.RaiseCanExecuteChanged();
             RemoveBookCommand.RaiseCanExecuteChanged();
             AddBookToCatalogCommand.RaiseCanExecuteChanged();
@@ -148,6 +150,16 @@ public class BookCatalogViewModel : ViewModelBase
               
                 _isLoading = false;
             }
+        }
+    }
+    public AuthorDisplay? SelectedAuthor
+    {
+        get => _selectedAuthor;
+        set
+        {
+            _selectedAuthor = value;
+            RaisePropertyChanged();
+            RemoveAuthorCommand.RaiseCanExecuteChanged();
         }
     }
     public ObservableCollection<BookDisplay>? Books
@@ -192,7 +204,7 @@ public class BookCatalogViewModel : ViewModelBase
     public BookCatalogViewModel()
     {
         BookToAdd = new BookDisplay();
-        RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedBook?.SelectedAuthor != null);
+        RemoveAuthorCommand = new DelegateCommand(RemoveAuthorFromBook, (object? _) => SelectedAuthor != null);
         AddAuthorCommand = new DelegateCommand(AddAuthorToBook, (object? _) => AuthorToAdd != null);
         SaveCommand = new DelegateCommandAsync(SaveBooksAsync, (object? _) => HasUnsavedChanges == true);
         RemoveBookCommand = new DelegateCommand(RemoveBookFromCatalog, (object? _) => SelectedBook != null);
@@ -267,9 +279,9 @@ public class BookCatalogViewModel : ViewModelBase
 
     private void RemoveAuthorFromBook(object obj)
     {
-        if (SelectedBook != null && SelectedBook.SelectedAuthor != null)
+        if (SelectedBook != null && SelectedAuthor != null)
         {
-            SelectedBook.Authors.Remove(SelectedBook.SelectedAuthor);
+            SelectedBook.Authors.Remove(SelectedAuthor);
             SelectedBook.RaisePropertyChanged(nameof(SelectedBook.AuthorsString));
             
             if (SelectedBook != BookToAdd)
